@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="../../Core/etc/config.xsd">
+	<default>
+		<loyaltylion>
+			<settings>
+				<enabled>1</enabled>
+			</settings>
+		</loyaltylion>
+	</default>
+</config>
