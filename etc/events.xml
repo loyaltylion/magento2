@@ -3,4 +3,7 @@
 	<event name="customer_register_success">
 		<observer name="customer_register_success_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\RegisterObserver"/>
 	</event>
+	<event name="sales_order_place_after">
+		<observer name="sale_order_place_after_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\OrderObserver"/>
+	</event>
 </config>
