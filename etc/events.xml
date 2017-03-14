@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Event/etc/events.xsd">
+	<event name="customer_register_success">
+		<observer name="customer_register_success_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\RegisterObserver"/>
+	</event>
+</config>
