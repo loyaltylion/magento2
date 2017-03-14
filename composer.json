@@ -1,10 +1,12 @@
 {
-	"name": "loyaltylion/m2",
+	"name": "loyaltylion/core",
 	"description": "LoyaltyLion - Loyalty Program",
 	"type": "magento2-module",
 	"version":"1.0.0",
 	"autoload": {
-		"psr-4": { "LoyaltyLion\\Core\\": "" },
+		"psr-4": {
+			"Loyaltylion\\Core\\": ""
+		},
 		"files": [ "registration.php" ]
 	}
 }
