@@ -36,7 +36,7 @@ class OrderUpdateObserver implements ObserverInterface {
             'user_agent' => $_SERVER['HTTP_USER_AGENT']
         );
 
-        $data = array_merge($data, $this->_orderTools->getPaymentStatus());
+        $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
 
         $data['cancellation_status'] = $order->getState() == 'canceled' ? 'cancelled' : 'not_cancelled';
 
