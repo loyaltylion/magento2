@@ -7,7 +7,7 @@ class Sdk extends \Magento\Framework\View\Element\Template {
   const TOKEN = 'loyaltylion_core/general/token';
   const SECRET = 'loyaltylion_core/general/secret';
   const SDK_URL = 'dg1f2pfrgjxdq.cloudfront.net/libs/ll.sdk-1.1.js';
-  const PLATFORM_URL = 'platform.loyaltylion.dev';
+  const PLATFORM_URL = 'platform.loyaltylion.com';
 
   public function __construct(
       \Magento\Framework\View\Element\Template\Context $context,

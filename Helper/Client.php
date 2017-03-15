@@ -7,7 +7,7 @@ class Client {
   private $token;
   private $secret;
   private $connection;
-  private $base_uri = 'http://api.loyaltylion.dev/v2';
+  private $base_uri = 'http://api.loyaltylion.com/v2';
 
   public function __construct(\Loyaltylion\Core\Block\Sdk $sdk) {
     $this->token = $sdk->getToken();
