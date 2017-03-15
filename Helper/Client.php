@@ -7,7 +7,7 @@ class Client {
   private $token;
   private $secret;
   private $connection;
-  private $base_uri = 'http://api.loyaltylion.com/v2';
+  private $base_uri = 'http://api.loyaltylion.dev/v2';
 
   public function __construct(\Loyaltylion\Core\Block\Sdk $sdk) {
     $this->token = $sdk->getToken();
@@ -15,7 +15,7 @@ class Client {
     $this->sdk = $sdk;
 
     if (!$this->sdk->isEnabled()) {
-      throw new Exception("Please provide a valid token and secret");
+      throw new \Exception("Please provide a valid token and secret");
     }
 
     if (isset($extra['base_uri'])) $this->base_uri = $extra['base_uri'];

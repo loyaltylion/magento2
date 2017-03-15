@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Event/etc/events.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
 	<event name="customer_register_success">
 		<observer name="customer_register_success_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\RegisterObserver"/>
 	</event>
-	<event name="sales_order_place_after">
-		<observer name="sale_order_place_after_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\OrderObserver"/>
+	<event name="checkout_submit_all_after">
+		<observer name="checkout_submit_all_after_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\OrderCreateObserver"/>
+	</event>
+	<event name="sales_order_save_after">
+		<observer name="checkout_submit_all_after_loyaltylion_observer" instance="Loyaltylion\Core\Model\Observer\OrderUpdateObserver"/>
 	</event>
 </config>

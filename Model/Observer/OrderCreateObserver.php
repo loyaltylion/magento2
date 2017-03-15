@@ -3,31 +3,35 @@
 namespace Loyaltylion\Core\Model\Observer;
 
 
+use Loyaltylion\Core\Helper\OrderTools;
 use Loyaltylion\Core\Helper\Referrals;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 
-class OrderObserver implements ObserverInterface {
+class OrderCreateObserver implements ObserverInterface {
 
     public function __construct(
         \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Block\Sdk $sdk,
         \Loyaltylion\Core\Helper\Referrals $referrals,
         \Loyaltylion\Core\Helper\Telemetry $telemetry,
+        \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->_client = $client;
         $this->_sdk = $sdk;
         $this->_referrals = $referrals;
-        $this->_logger = $logger;
         $this->_telemetry = $telemetry;
+        $this->_orderTools = $orderTools;
+        $this->_logger = $logger;
     }
 
     public function execute(Observer $observer) {
         if (!$this->_sdk->isEnabled()) return;
 
         $order = $observer->getEvent()->getOrder();
+        $this->_logger->debug("Order", ['order' => $order->toArray()]);
 
         # We can't track an order without a merchant_id
         if (!$order || !$order->getId()) return;
@@ -42,24 +46,11 @@ class OrderObserver implements ObserverInterface {
             'guest' => (bool) $order->getCustomerIsGuest(),
             'ip_address' => $order->getRemoteIp(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            '$magento_payload' => $order->toArray()
         );
 
+        $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
 
-        $data['$magento_payload']['order_items'] = $order->getAllItems();
-        $data['$magento_payload']['addresses'] = $order->getAddresses();
-
-        $data = array_merge($data, $this->_telemetry->getSystemInfo());
-
-        if ($order->getBaseTotalDue() == $order->getBaseGrandTotal()) {
-            $data['payment_status'] = 'not_paid';
-        } else if ($order->getBaseTotalDue() == 0) {
-            $data['payment_status'] = 'paid';
-        } else {
-            $data['payment_status'] = 'partially_paid';
-            $total_paid = $order->getBaseTotalPaid();
-            $data['total_paid'] = $total_paid === null ? 0 : $total_paid;
-        }
+        $data = array_merge($data, $this->_orderTools->getPaymentStatus());
 
         if ($order->getCouponCode()) {
             $data['discount_codes'] = array(
