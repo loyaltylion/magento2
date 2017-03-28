@@ -5,6 +5,8 @@ namespace Loyaltylion\Core\Helper;
 
 class OrderTools
 {
+    private $_telemetry;
+
     public function __construct(
         \Loyaltylion\Core\Helper\Telemetry $telemetry
     )
@@ -12,7 +14,8 @@ class OrderTools
         $this->_telemetry = $telemetry;
     }
 
-    public function getPaymentStatus($order) {
+    public function getPaymentStatus($order)
+    {
         $payment_data = array();
         if ($order->getBaseTotalDue() == $order->getBaseGrandTotal()) {
             $payment_data['payment_status'] = 'not_paid';
@@ -27,7 +30,8 @@ class OrderTools
         return $payment_data;
     }
 
-    public function getOrderMetadata($order) {
+    public function getOrderMetadata($order)
+    {
         $metadata = array();
         $metadata['$magento_payload'] = $order->toArray();
         $metadata['$magento_payload']['order_items'] = $order->getAllItems();
