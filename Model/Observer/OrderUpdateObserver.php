@@ -6,17 +6,20 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 
-class OrderUpdateObserver implements ObserverInterface {
+class OrderUpdateObserver implements ObserverInterface
+{
+    private $_client, $_config, $_telemetry, $_orderTools, $_logger;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Client $client,
-        \Loyaltylion\Core\Block\Sdk $sdk,
+        \Loyaltylion\Core\Helper\Config $config,
         \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
-    ) {
+    )
+    {
         $this->_client = $client;
-        $this->_sdk = $sdk;
+        $this->_config = $config;
         $this->_telemetry = $telemetry;
         $this->_orderTools = $orderTools;
         $this->_logger = $logger;
@@ -24,7 +27,7 @@ class OrderUpdateObserver implements ObserverInterface {
 
     public function execute(Observer $observer)
     {
-        if (!$this->_sdk->isEnabled()) return;
+        if (!$this->_config->isEnabled()) return;
 
         $order = $observer->getEvent()->getOrder();
         if (!$order) return;

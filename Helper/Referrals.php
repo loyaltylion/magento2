@@ -11,17 +11,22 @@ namespace Loyaltylion\Core\Helper;
 
 class Referrals
 {
+    private $_session;
+
     public function __construct(
         \Magento\Customer\Model\Session $session
-    ) {
+    )
+    {
         $this->_session = $session;
     }
+
     /**
      * Check the session for a `tracking_id`, and return it unless it has expired
      *
      * @return [type] Tracking id or null if it doesn't exist or has expired
      */
-    public function getTrackingIdFromSession() {
+    public function getTrackingIdFromSession()
+    {
         if (!$this->_session->getLoyaltyLionTrackingId())
             return null;
 
@@ -40,7 +45,8 @@ class Referrals
         return $values[1];
     }
 
-    public function getLoyaltyLionReferralId(){
+    public function getLoyaltyLionReferralId()
+    {
         return $this->_session->getLoyaltyLionReferralId();
     }
 }
