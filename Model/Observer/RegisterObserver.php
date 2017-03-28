@@ -8,18 +8,18 @@ use Magento\Framework\Event\ObserverInterface;
 class RegisterObserver implements ObserverInterface {
   public function __construct(
     \Loyaltylion\Core\Helper\Client $client,
-    \Loyaltylion\Core\Block\Sdk $sdk,
+    \Loyaltylion\Core\Helper\Config $config,
     \Psr\Log\LoggerInterface $logger,
     \Loyaltylion\Core\Helper\Referrals $referrals
   ) {
     $this->_client = $client;
-    $this->_sdk = $sdk;
+    $this->_config = $config;
     $this->_logger = $logger;       
     $this->_referrals = $referrals;
   }
 
   public function execute(Observer $observer) {
-    if (!$this->_sdk->isEnabled()) return;
+    if (!$this->_config->isEnabled()) return;
     $customer = $observer->getEvent()->getCustomer();
     $this->trackSignup($customer);
   }

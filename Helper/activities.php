@@ -18,13 +18,13 @@ class Activities extends Client {
    */
   public function track($name, $data) {
 
-    if (!is_array($data)) throw new Exception('Activity data must be an array');
+    if (!is_array($data)) throw new \Exception('Activity data must be an array');
 
     $data['name'] = $name;
 
-    if (empty($data['name'])) throw new Exception('Activity name is required');
-    if (empty($data['customer_id'])) throw new Exception('customer_id is required');
-    if (empty($data['customer_email'])) throw new Exception('customer_email is required');
+    if (empty($data['name'])) throw new \Exception('Activity name is required');
+    if (empty($data['customer_id'])) throw new \Exception('customer_id is required');
+    if (empty($data['customer_email'])) throw new \Exception('customer_email is required');
 
     if (empty($data['date'])) $data['date'] = date('c');
 

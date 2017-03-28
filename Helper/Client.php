@@ -9,12 +9,12 @@ class Client {
   private $connection;
   private $base_uri = 'http://api.loyaltylion.dev/v2';
 
-  public function __construct(\Loyaltylion\Core\Block\Sdk $sdk) {
-    $this->token = $sdk->getToken();
-    $this->secret = $sdk->getSecret();
-    $this->sdk = $sdk;
+  public function __construct(\Loyaltylion\Core\Helper\Config $config) {
+    $this->token = $config->getToken();
+    $this->secret = $config->getSecret();
+    $this->config = $config;
 
-    if (!$this->sdk->isEnabled()) {
+    if (!$this->config->isEnabled()) {
       throw new \Exception("Please provide a valid token and secret");
     }
 

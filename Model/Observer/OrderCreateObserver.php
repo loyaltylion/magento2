@@ -13,14 +13,14 @@ class OrderCreateObserver implements ObserverInterface {
 
     public function __construct(
         \Loyaltylion\Core\Helper\Client $client,
-        \Loyaltylion\Core\Block\Sdk $sdk,
+        \Loyaltylion\Core\Helper\Config $config,
         \Loyaltylion\Core\Helper\Referrals $referrals,
         \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->_client = $client;
-        $this->_sdk = $sdk;
+        $this->_config = $config;
         $this->_referrals = $referrals;
         $this->_telemetry = $telemetry;
         $this->_orderTools = $orderTools;
@@ -28,7 +28,7 @@ class OrderCreateObserver implements ObserverInterface {
     }
 
     public function execute(Observer $observer) {
-        if (!$this->_sdk->isEnabled()) return;
+        if (!$this->_config->isEnabled()) return;
 
         $order = $observer->getEvent()->getOrder();
         $this->_logger->debug("Order", ['order' => $order->toArray()]);
