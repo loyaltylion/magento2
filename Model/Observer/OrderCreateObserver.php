@@ -55,7 +55,7 @@ class OrderCreateObserver implements ObserverInterface
 
         $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
 
-        $data = array_merge($data, $this->_orderTools->getPaymentStatus());
+        $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
 
         if ($order->getCouponCode()) {
             $data['discount_codes'] = array(
