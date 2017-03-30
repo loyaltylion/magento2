@@ -62,9 +62,9 @@ class RegisterObserver implements ObserverInterface
         $response = $this->_client->events->track('$signup', $data);
 
         if ($response->success) {
-            $this->_logger->addDebug('[LoyaltyLion] Tracked event [signup] OK');
+            $this->_logger->debug('[LoyaltyLion] Tracked event [signup] OK');
         } else {
-            $this->_logger->addDebug(
+            $this->_logger->debug(
                 '[LoyaltyLion] Failed to track event - status: ' . $response->status . ', error: ' . $response->error);
         }
     }
