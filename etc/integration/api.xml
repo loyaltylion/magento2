@@ -1,0 +1,60 @@
+<integrations>
+    <integration name="loyaltylion">
+        <resources>
+            <!-- all customer resources -->
+            <resource name="Magento_Customer::customer" />
+            <resource name="Magento_Customer::manage" />
+            <resource name="Magento_Customer::group" />
+            <resource name="Magento_Customer::config_customer" />
+            <resource name="Magento_Customer::online" />
+
+            <!-- all Sales resources -->
+            <resource name="Magento_Sales::sales"/>
+            <resource name="Magento_Sales::sales_operation"/>
+            <resource name="Magento_Sales::sales_order"/>
+            <resource name="Magento_Sales::actions"/>
+            <resource name="Magento_Sales::create"/>
+            <resource name="Magento_Sales::actions_view"/>
+            <resource name="Magento_Sales::email"/>
+            <resource name="Magento_Sales::reorder"/>
+            <resource name="Magento_Sales::actions_edit"/>
+            <resource name="Magento_Sales::cancel"/>
+            <resource name="Magento_Sales::review_payment"/>
+            <resource name="Magento_Sales::capture"/>
+            <resource name="Magento_Sales::invoice"/>
+            <resource name="Magento_Sales::creditmemo"/>
+            <resource name="Magento_Sales::hold"/>
+            <resource name="Magento_Sales::unhold"/>
+            <resource name="Magento_Sales::ship"/>
+            <resource name="Magento_Sales::comment"/>
+            <resource name="Magento_Sales::emails"/>
+            <resource name="Magento_Sales::sales_invoice"/>
+            <resource name="Magento_Sales::shipment"/>
+            <resource name="Magento_Sales::sales_creditmemo"/>
+            <resource name="Magento_Sales::transactions"/>
+            <resource name="Magento_Sales::transactions_fetch"/>
+            <resource name="Magento_Sales::config_sales"/>
+            <resource name="Magento_Sales::sales_email"/>
+            <resource name="Magento_Sales::sales_pdf"/>
+            <resource name="Magento_Sales::order_statuses"/>
+
+            <!-- all pricerule resources -->
+            <resource name="Magento_Config::config"/>
+            <resource name="Magento_Config::sendfriend"/>
+            <resource name="Magento_Config::advanced"/>
+            <resource name="Magento_Config::config_admin"/>
+            <resource name="Magento_Config::config_general"/>
+            <resource name="Magento_Config::web"/>
+            <resource name="Magento_Backend::stores"/>
+            <resource name="Magento_Backend::stores_settings"/>
+            <resource name="Magento_Backend::store"/>
+            <resource name="Magento_Backend::stores_attributes"/>
+            <resource name="Magento_Backend::stores_other_settings"/>
+            <resource name="Magento_Backend::marketing"/>
+            <resource name="Magento_CatalogRule::promo"/>
+            <resource name="Magento_CatalogRule::promo_catalog"/>
+            <resource name="Magento_SalesRule::config_promo"/>
+            <resource name="Magento_SalesRule::quote"/>
+        </resources>
+    </integration>
+</integrations>
