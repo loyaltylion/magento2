@@ -1,7 +1,7 @@
 <integrations>
     <integration name="loyaltylion">
         <email>support@loyaltylion.com</email>
-        <endpoint_url>http://app.loyaltylion.com/magento2/callback</endpoint_url>
-        <identity_link_url>http://app.loyaltylion.com/magento2/link</identity_link_url>
+        <endpoint_url>https://app.loyaltylion.com/magento2/callback</endpoint_url>
+        <identity_link_url>https://app.loyaltylion.com/magento2/link</identity_link_url>
     </integration>
 </integrations>
