@@ -42,19 +42,15 @@ class RegisterObserver implements ObserverInterface
             'customer_id' => $customer->getId(),
             'customer_email' => $customer->getEmail(),
             'date' => date('c'),
-            // TODO: check REMOTE_ADDR is actually the thing we want and
-            // not just the reverse proxy's IP
-            // also, this'll probably fail validation...
+            // TODO: Check real IP header - this assumes no reverse proxy
             'ip_address' => $_SERVER['REMOTE_ADDR'],
             'user_agent' => $_SERVER['HTTP_USER_AGENT']
         );
 
-        //TODO: do we actually use this anymore?
         if ($this->_referrals->getLoyaltyLionReferralId())
             $data['referral_id'] = $this->_referrals->getLoyaltyLionReferralId();
 
-        //TODO: also check that this works
-        $tracking_id = $this->getTrackingIdFromSession();
+        $tracking_id = $this->_referrals->getTrackingIdFromSession();
 
         if ($tracking_id)
             $data['tracking_id'] = $tracking_id;
