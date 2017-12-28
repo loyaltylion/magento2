@@ -1,5 +1,5 @@
 <integrations>
-    <integration name="loyaltylion">
+    <integration name="LoyaltyLion">
         <resources>
             <!-- all customer resources -->
             <resource name="Magento_Customer::customer" />

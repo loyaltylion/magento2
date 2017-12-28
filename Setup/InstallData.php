@@ -30,7 +30,7 @@ class InstallData implements InstallDataInterface
 
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        $this->integrationManager->processIntegrationConfig(['loyaltylion']);
+        $this->integrationManager->processIntegrationConfig(['LoyaltyLion']);
     }
 }
  
