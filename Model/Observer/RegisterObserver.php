@@ -24,9 +24,13 @@ class RegisterObserver implements ObserverInterface
 
     public function execute(Observer $observer)
     {
-        if (!$this->_config->isEnabled()) return;
-        $customer = $observer->getEvent()->getCustomer();
-        $this->trackSignup($customer);
+        try {
+            if (!$this->_config->isEnabled()) return;
+            $customer = $observer->getEvent()->getCustomer();
+            $this->trackSignup($customer);
+        } catch (\Exception $e) {
+            $this->_logger->error('[LoyaltyLion] Unexpected error: ' . $e->getMessage());
+        }
     }
 
     /**
