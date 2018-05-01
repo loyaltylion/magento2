@@ -13,8 +13,8 @@ class Config
 {
     const TOKEN = 'loyaltylion_core/general/token';
     const SECRET = 'loyaltylion_core/general/secret';
-    const SDK_URL = 'dg1f2pfrgjxdq.cloudfront.net/libs/ll.sdk-1.1.js';
-    const PLATFORM_URL = 'platform.loyaltylion.com';
+    const LOADER_PATH = '/static/2/loader.js';
+    const SDK_HOST = 'sdk.loyaltylion.net';
 
     private $_scopeConfig;
 
@@ -43,13 +43,14 @@ class Config
         return $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
-    public function getSDKUrl()
+    public function getLoaderUrl()
     {
-        return isset($_SERVER['LOYALTYLION_SDK_URL']) ? $_SERVER['LOYALTYLION_SDK_URL'] : self::SDK_URL;
+	$path = isset($_SERVER['LOYALTYLION_LOADER_PATH']) ? $_SERVER['LOYALTYLION_LOADER_PATH'] : self::LOADER_PATH;
+        return $this->getSdkHost() . $path;
     }
 
-    public function getPlatformHost()
+    public function getSdkHost()
     {
-        return isset($_SERVER['LOYALTYLION_PLATFORM_HOST']) ? $_SERVER['LOYALTYLION_PLATFORM_HOST'] : self::PLATFORM_URL;
+        return isset($_SERVER['LOYALTYLION_SDK_HOST']) ? $_SERVER['LOYALTYLION_SDK_HOST'] : self::SDK_HOST;
     }
 }
