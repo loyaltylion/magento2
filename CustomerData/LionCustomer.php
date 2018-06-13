@@ -27,7 +27,7 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
             'customer' => [
                 'id' => $customer->getId(),
                 'email' => $customer->getEmail(),
-                'name' => $customer->getName()
+                'name' => $customer->getName(),
             ],
             'auth_token' => sha1($customer->getId() . $now . $this->config->getSecret()),
         ]

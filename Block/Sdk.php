@@ -31,13 +31,13 @@ class Sdk extends \Magento\Framework\View\Element\Template
         return $this->_config->getSecret();
     }
 
-    public function getSDKUrl()
+    public function getLoaderUrl()
     {
-        return $this->_config->getSDKUrl();
+        return $this->_config->getLoaderUrl();
     }
 
-    public function getPlatformHost()
+    public function getSdkHost()
     {
-        return $this->_config->getPlatformHost();
+        return $this->_config->getSdkHost();
     }
 }
