@@ -50,7 +50,7 @@ class OrderCreateObserver implements ObserverInterface
             'number' => (string)$order->getIncrementId(),
             'guest' => (bool)$order->getCustomerIsGuest(),
             'ip_address' => $order->getRemoteIp(),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
         );
 
         $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));

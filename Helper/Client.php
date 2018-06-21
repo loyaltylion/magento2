@@ -19,10 +19,6 @@ class Client
         $this->secret = $config->getSecret();
         $this->config = $config;
 
-        if (!$this->config->isEnabled()) {
-            throw new \Exception("Please provide a valid token and secret");
-        }
-
         if (isset($extra['base_uri'])) $this->base_uri = $extra['base_uri'];
 
         $this->connection = new Connection($this->token, $this->secret, $this->base_uri);

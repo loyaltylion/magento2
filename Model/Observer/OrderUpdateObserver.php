@@ -36,7 +36,7 @@ class OrderUpdateObserver implements ObserverInterface
             'refund_status' => 'not_refunded',
             'total_refunded' => 0,
             'ip_address' => $order->getRemoteIp(),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
         );
 
         $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
