@@ -3,19 +3,19 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="loyaltylion_core" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                 showInStore="1">
+                 showInStore="0">
             <label>LoyaltyLion</label>
             <tab>customer</tab>
             <resource>Loyaltylion_Core::loyaltylion_core</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0"
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="0">
                 <label>General</label>
                 <field id="token" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                       showInStore="0">
                     <label>Token</label>
                 </field>
                 <field id="secret" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
-                       showInStore="1">
+                       showInStore="0">
                     <label>Secret</label>
                 </field>
             </group>
