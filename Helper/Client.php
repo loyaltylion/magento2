@@ -10,7 +10,7 @@ class Client
     private $connection;
     public $activities, $events;
     public $orders;
-    private $base_uri = 'http://api.loyaltylion.com/v2';
+    private $base_uri = 'https://api.loyaltylion.com/v2';
     private $config;
 
     public function __construct(\Loyaltylion\Core\Helper\Config $config)
