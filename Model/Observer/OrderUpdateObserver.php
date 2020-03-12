@@ -27,10 +27,10 @@ class OrderUpdateObserver implements ObserverInterface
 
     public function execute(Observer $observer)
     {
-        if (!$this->_config->isEnabled()) return;
-
         $order = $observer->getEvent()->getOrder();
         if (!$order) return;
+
+        if (!$this->_config->isEnabledForStore($order->getStoreId())) return;
 
         $data = array(
             'refund_status' => 'not_refunded',
@@ -59,7 +59,8 @@ class OrderUpdateObserver implements ObserverInterface
 
         $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
 
-        $response = $this->_client->orders->update($order->getId(), $data);
+        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
+        $response = $config->orders->update($order->getId(), $data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Updated order OK');

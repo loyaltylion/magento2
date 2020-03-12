@@ -16,9 +16,9 @@ class Sdk extends \Magento\Framework\View\Element\Template
         $this->_config = $config;
     }
 
-    public function isEnabled()
+    public function isEnabledInContext()
     {
-        return $this->_config->isEnabled();
+        return $this->_config->isEnabledInContext();
     }
 
     public function getToken()
