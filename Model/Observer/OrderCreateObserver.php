@@ -33,13 +33,14 @@ class OrderCreateObserver implements ObserverInterface
 
     public function execute(Observer $observer)
     {
-        if (!$this->_config->isEnabled()) return;
-
         $order = $observer->getEvent()->getOrder();
-        $this->_logger->debug("Order", ['order' => $order->toArray()]);
-
         # We can't track an order without a merchant_id
         if (!$order || !$order->getId()) return;
+
+        if (!$this->_config->isEnabledForStore($order->getStoreId())) return;
+        
+        $this->_logger->debug("Order", ['order' => $order->toArray()]);
+
 
         $data = array(
             'merchant_id' => $order->getId(),
@@ -75,7 +76,8 @@ class OrderCreateObserver implements ObserverInterface
         if ($tracking_id)
             $data['tracking_id'] = $tracking_id;
 
-        $response = $this->_client->orders->create($data);
+        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
+        $response = $client->orders->create($data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Tracked order OK');

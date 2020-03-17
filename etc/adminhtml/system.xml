@@ -10,11 +10,11 @@
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="0">
                 <label>General</label>
-                <field id="token" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
+                <field id="token" translate="label" type="text" sortOrder="20" showInDefault="0" showInWebsite="1"
                        showInStore="0">
                     <label>Token</label>
                 </field>
-                <field id="secret" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
+                <field id="secret" translate="label" type="text" sortOrder="20" showInDefault="0" showInWebsite="1"
                        showInStore="0">
                     <label>Secret</label>
                 </field>

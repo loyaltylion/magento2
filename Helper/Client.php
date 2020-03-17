@@ -15,14 +15,17 @@ class Client
 
     public function __construct(\Loyaltylion\Core\Helper\Config $config)
     {
-        $this->token = $config->getToken();
-        $this->secret = $config->getSecret();
         $this->config = $config;
+    }
+
+    public function getClient($token, $secret)
+    {
+        $this->token = $token;
+        $this->secret = $secret;
 
         if (isset($extra['base_uri'])) $this->base_uri = $extra['base_uri'];
 
         $this->connection = new Connection($this->token, $this->secret, $this->base_uri);
-
         $this->activities = $this->events = new Activities($this->connection);
         $this->orders = new Orders($this->connection);
     }

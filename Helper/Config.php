@@ -25,22 +25,32 @@ class Config
         $this->_scopeConfig = $scopeConfig;
     }
 
-    public function isEnabled()
+    public function isEnabledInContext()
     {
-        $token = $this->getToken();
-        $secret = $this->getSecret();
-        if (empty($token) || empty($secret)) return false;
+        $this->token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $this->secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+        if (empty($this->token) || empty($this->secret)) return false;
+        return true;
+    }
+
+    public function isEnabledForStore($storeId)
+    {
+        $this->token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        $this->secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+
+        if (empty($this->token) || empty($this->secret)) return false;
         return true;
     }
 
     public function getToken()
     {
-        return $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->token;
     }
 
     public function getSecret()
     {
-        return $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->secret;
     }
 
     public function getLoaderUrl()
