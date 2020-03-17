@@ -13,7 +13,8 @@ class Client
     private $base_uri = 'https://api.loyaltylion.com/v2';
     private $config;
 
-    public function __construct(\Loyaltylion\Core\Helper\Config $config) {
+    public function __construct(\Loyaltylion\Core\Helper\Config $config)
+    {
         $this->config = $config;
     }
 
