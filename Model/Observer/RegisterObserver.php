@@ -59,7 +59,7 @@ class RegisterObserver implements ObserverInterface
         if ($tracking_id)
             $data['tracking_id'] = $tracking_id;
 
-        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret())
+        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
         $response = $client->events->track('$signup', $data);
 
         if ($response->success) {
