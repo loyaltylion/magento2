@@ -17,12 +17,15 @@ class Config
     const SDK_HOST = 'sdk.loyaltylion.net';
 
     private $_scopeConfig;
+    private $token;
+    private $secret;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     )
     {
         $this->_scopeConfig = $scopeConfig;
+        $this->isEnabledInContext();
     }
 
     public function isEnabledInContext()
