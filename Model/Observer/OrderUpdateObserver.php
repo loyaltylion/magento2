@@ -59,8 +59,9 @@ class OrderUpdateObserver implements ObserverInterface
 
         $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
 
-        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
-        $response = $config->orders->update($order->getId(), $data);
+        // Set the correct token and secret for the client
+        $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
+        $response = $this->_client->orders->update($order->getId(), $data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Updated order OK');
