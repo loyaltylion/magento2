@@ -8,8 +8,6 @@ class Client
     private $token;
     private $secret;
     private $connection;
-    public $activities, $events;
-    public $orders;
     private $base_uri = 'https://api.loyaltylion.com/v2';
     private $config;
 
@@ -25,9 +23,10 @@ class Client
 
         if (isset($extra['base_uri'])) $this->base_uri = $extra['base_uri'];
 
-        $this->connection = new Connection($this->token, $this->secret, $this->base_uri);
-        $this->activities = $this->events = new Activities($this->connection);
-        $this->orders = new Orders($this->connection);
+        $connection = new Connection($this->token, $this->secret, $this->base_uri);
+        $events = new Activities($connection);
+        $orders = new Orders($connection);
+        return [$connection, $events, $orders];
     }
 
     protected function parseResponse($response)
