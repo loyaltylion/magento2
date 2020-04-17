@@ -30,7 +30,13 @@ class OrderUpdateObserver implements ObserverInterface
         $order = $observer->getEvent()->getOrder();
         if (!$order) return;
 
-        if (!$this->_config->isEnabledForStore($order->getStoreId())) return;
+        // It's important to fetch our credentials with the storeId saved to
+        // our order here: it's possible to update orders from different contexts,
+        // so the general purpose scopeConfig->getValue would potentially return
+        // a different storeId here
+        $creds = $this->_config->getCredentialsForStore($order->getStoreId());
+        if (!$this->_config->isEnabled(...$creds)) return;
+        list(, , $orders) = $this->_client->getClient(...$creds);
 
         $data = array(
             'refund_status' => 'not_refunded',
@@ -59,8 +65,7 @@ class OrderUpdateObserver implements ObserverInterface
 
         $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
 
-        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
-        $response = $config->orders->update($order->getId(), $data);
+        $response = $orders->update($order->getId(), $data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Updated order OK');

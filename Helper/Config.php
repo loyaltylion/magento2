@@ -25,37 +25,37 @@ class Config
         $this->_scopeConfig = $scopeConfig;
     }
 
-    public function isEnabledInContext()
+    public function isEnabled($token, $secret)
     {
-        $this->token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $this->secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
-        if (empty($this->token) || empty($this->secret)) return false;
-        return true;
+        return !(empty($token) || empty($secret));
     }
 
-    public function isEnabledForStore($storeId)
+    // getCredentialsForStore should be your default option for most cases:
+    // while the current store can be inferred from context in some situations, it may
+    // be defaulted and implicitly fallback to something else in others.
+    // For example, within the admin view, this falls back to the first store.
+    //
+    // Therefore, for safety, it's best to always be explicit about which store you're
+    // inspecting the config of with this function.
+    public function getCredentialsForStore($storeId)
     {
-        $this->token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
-        $this->secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
-
-        if (empty($this->token) || empty($this->secret)) return false;
-        return true;
+        $token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        $secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        return [$token, $secret];
     }
 
-    public function getToken()
+    // If you can trust the context to correctly know the current store (e.g. only in the non-admin
+    // frontend), you can use this to find the LL credentials for the current context.
+    public function getCredentialsForContext()
     {
-        return $this->token;
-    }
-
-    public function getSecret()
-    {
-        return $this->secret;
+        $token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return [$token, $secret];
     }
 
     public function getLoaderUrl()
     {
-	$path = isset($_SERVER['LOYALTYLION_LOADER_PATH']) ? $_SERVER['LOYALTYLION_LOADER_PATH'] : self::LOADER_PATH;
+        $path = isset($_SERVER['LOYALTYLION_LOADER_PATH']) ? $_SERVER['LOYALTYLION_LOADER_PATH'] : self::LOADER_PATH;
         return $this->getSdkHost() . $path;
     }
 

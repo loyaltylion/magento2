@@ -16,19 +16,14 @@ class Sdk extends \Magento\Framework\View\Element\Template
         $this->_config = $config;
     }
 
-    public function isEnabledInContext()
+    public function isEnabled($token, $secret)
     {
-        return $this->_config->isEnabledInContext();
+        return $this->_config->isEnabled($token, $secret);
     }
 
-    public function getToken()
+    public function getCredentialsForContext()
     {
-        return $this->_config->getToken();
-    }
-
-    public function getSecret()
-    {
-        return $this->_config->getSecret();
+        return $this->_config->getCredentialsForContext();
     }
 
     public function getLoaderUrl()

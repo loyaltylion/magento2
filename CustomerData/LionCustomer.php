@@ -19,6 +19,7 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
     public function getSectionData()
     {
         $customer = $this->session->getCustomer();
+        list(, $secret) = $this->config->getCredentialsForContext();
         $now = date('c');
         return (
         [
@@ -29,7 +30,7 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
                 'email' => $customer->getEmail(),
                 'name' => $customer->getName(),
             ],
-            'auth_token' => sha1($customer->getId() . $now . $this->config->getSecret()),
+            'auth_token' => sha1($customer->getId() . $now . $secret),
         ]
         );
     }

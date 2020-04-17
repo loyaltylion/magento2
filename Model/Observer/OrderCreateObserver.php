@@ -34,13 +34,18 @@ class OrderCreateObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
-        # We can't track an order without a merchant_id
+        // We can't track an order without a merchant_id
         if (!$order || !$order->getId()) return;
 
-        if (!$this->_config->isEnabledForStore($order->getStoreId())) return;
-        
-        $this->_logger->debug("Order", ['order' => $order->toArray()]);
+        // It's important to fetch our credentials with the storeId saved to
+        // our order here: it's possible to create orders from different contexts,
+        // so the general purpose scopeConfig->getValue would potentially return
+        // a different storeId here
+        $creds = $this->_config->getCredentialsForStore($order->getStoreId());
+        if (!$this->_config->isEnabled(...$creds)) return;
+        list(, , $orders) = $this->_client->getClient(...$creds);
 
+        $this->_logger->debug("Order", ['order' => $order->toArray()]);
 
         $data = array(
             'merchant_id' => $order->getId(),
@@ -67,7 +72,6 @@ class OrderCreateObserver implements ObserverInterface
             );
         }
 
-
         if ($this->_referrals->getLoyaltyLionReferralId())
             $data['referral_id'] = $this->_referrals->getLoyaltyLionReferralId();
 
@@ -76,8 +80,7 @@ class OrderCreateObserver implements ObserverInterface
         if ($tracking_id)
             $data['tracking_id'] = $tracking_id;
 
-        $client = $this->_client->getClient($this->_config->getToken(), $this->_config->getSecret());
-        $response = $client->orders->create($data);
+        $response = $orders->create($data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Tracked order OK');
