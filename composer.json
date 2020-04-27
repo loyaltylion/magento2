@@ -10,7 +10,9 @@
     "psr-4": {
       "Loyaltylion\\Core\\": ""
     },
-    "files": ["registration.php"]
+    "files": [
+      "registration.php"
+    ]
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",

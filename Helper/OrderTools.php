@@ -6,9 +6,8 @@ class OrderTools
 {
     private $_telemetry;
 
-    public function __construct(
-        \Loyaltylion\Core\Helper\Telemetry $telemetry
-    ) {
+    public function __construct(\Loyaltylion\Core\Helper\Telemetry $telemetry)
+    {
         $this->_telemetry = $telemetry;
     }
 
@@ -23,7 +22,7 @@ class OrderTools
             $payment_data['total_paid'] = $order->getBaseGrandTotal();
         } else {
             $payment_data['payment_status'] = 'partially_paid';
-            $payment_data['total_paid'] = (float)$order->getBaseTotalPaid();
+            $payment_data['total_paid'] = (float) $order->getBaseTotalPaid();
         }
         return $payment_data;
     }

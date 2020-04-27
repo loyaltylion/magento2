@@ -19,8 +19,12 @@ class Telemetry
     public function getSystemInfo()
     {
         $version_info = [];
-        $version_info['$magento_version'] = $this->productMetadata->getVersion();
-        $version_info['$module_version'] = $this->moduleList->getOne($this::MODULE_NAME)['setup_version'];
+        $version_info[
+            '$magento_version'
+        ] = $this->productMetadata->getVersion();
+        $version_info['$module_version'] = $this->moduleList->getOne(
+            $this::MODULE_NAME
+        )['setup_version'];
         return $version_info;
     }
 }

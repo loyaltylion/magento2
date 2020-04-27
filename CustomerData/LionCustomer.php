@@ -2,7 +2,8 @@
 
 namespace Loyaltylion\Core\CustomerData;
 
-class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterface
+class LionCustomer implements
+    \Magento\Customer\CustomerData\SectionSourceInterface
 {
     private $session;
     private $config;
@@ -20,8 +21,7 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
         $customer = $this->session->getCustomer();
         list(, $secret) = $this->config->getCredentialsForContext();
         $now = date('c');
-        return (
-        [
+        return [
             'logged_in' => $this->session->isLoggedIn(),
             'date' => $now,
             'customer' => [
@@ -30,7 +30,6 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
                 'name' => $customer->getName(),
             ],
             'auth_token' => sha1($customer->getId() . $now . $secret),
-        ]
-        );
+        ];
     }
 }

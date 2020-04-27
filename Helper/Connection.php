@@ -38,15 +38,15 @@ class Connection
         ];
 
         switch ($method) {
-        case 'POST':
-            $options += [
-                CURLOPT_POST => true,
-            ];
-            break;
-        case 'PUT':
-            $options += [
-                CURLOPT_CUSTOMREQUEST => 'PUT',
-            ];
+            case 'POST':
+                $options += [
+                    CURLOPT_POST => true,
+                ];
+                break;
+            case 'PUT':
+                $options += [
+                    CURLOPT_CUSTOMREQUEST => 'PUT',
+                ];
         }
 
         if (!empty($data)) {
@@ -83,6 +83,6 @@ class Connection
             ];
         }
 
-        return (object)$response;
+        return (object) $response;
     }
 }

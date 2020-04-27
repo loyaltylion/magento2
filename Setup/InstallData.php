@@ -18,8 +18,9 @@ class InstallData implements InstallDataInterface
      * @param ConfigBasedIntegrationManager $integrationManager
      */
 
-    public function __construct(ConfigBasedIntegrationManager $integrationManager)
-    {
+    public function __construct(
+        ConfigBasedIntegrationManager $integrationManager
+    ) {
         $this->integrationManager = $integrationManager;
     }
 
@@ -27,8 +28,10 @@ class InstallData implements InstallDataInterface
      * {@inheritdoc}
      */
 
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
-    {
+    public function install(
+        ModuleDataSetupInterface $setup,
+        ModuleContextInterface $context
+    ) {
         $this->integrationManager->processIntegrationConfig(['LoyaltyLion']);
     }
 }

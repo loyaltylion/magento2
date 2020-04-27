@@ -54,17 +54,25 @@ class OrderCreateObserver implements ObserverInterface
             'merchant_id' => $order->getId(),
             'customer_id' => $order->getCustomerId(),
             'customer_email' => $order->getCustomerEmail(),
-            'total' => (string)$order->getBaseGrandTotal(),
-            'total_shipping' => (string)$order->getBaseShippingAmount(),
-            'number' => (string)$order->getIncrementId(),
-            'guest' => (bool)$order->getCustomerIsGuest(),
+            'total' => (string) $order->getBaseGrandTotal(),
+            'total_shipping' => (string) $order->getBaseShippingAmount(),
+            'number' => (string) $order->getIncrementId(),
+            'guest' => (bool) $order->getCustomerIsGuest(),
             'ip_address' => $order->getRemoteIp(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+            'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
+                ? $_SERVER['HTTP_USER_AGENT']
+                : '',
         ];
 
-        $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
+        $data = array_merge(
+            $data,
+            $this->_orderTools->getOrderMetadata($order)
+        );
 
-        $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
+        $data = array_merge(
+            $data,
+            $this->_orderTools->getPaymentStatus($order)
+        );
 
         if ($order->getCouponCode()) {
             $data['discount_codes'] = [
@@ -76,7 +84,9 @@ class OrderCreateObserver implements ObserverInterface
         }
 
         if ($this->_referrals->getLoyaltyLionReferralId()) {
-            $data['referral_id'] = $this->_referrals->getLoyaltyLionReferralId();
+            $data[
+                'referral_id'
+            ] = $this->_referrals->getLoyaltyLionReferralId();
         }
 
         $tracking_id = $this->_referrals->getTrackingIdFromSession();
@@ -90,7 +100,12 @@ class OrderCreateObserver implements ObserverInterface
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Tracked order OK');
         } else {
-            $this->_logger->error('[LoyaltyLion] Failed to track order - status: ' . $response->status . ', error: ' . $response->error);
+            $this->_logger->error(
+                '[LoyaltyLion] Failed to track order - status: ' .
+                    $response->status .
+                    ', error: ' .
+                    $response->error
+            );
         }
     }
 }

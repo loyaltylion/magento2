@@ -28,37 +28,60 @@ class Config
         return !(empty($token) || empty($secret));
     }
 
-    // getCredentialsForStore should be your default option for most cases:
-    // while the current store can be inferred from context in some situations, it may
-    // be defaulted and implicitly fallback to something else in others.
-    // For example, within the admin view, this falls back to the first store.
-    //
-    // Therefore, for safety, it's best to always be explicit about which store you're
-    // inspecting the config of with this function.
+    /**
+     * getCredentialsForStore should be your default option for most cases:
+     * while the current store can be inferred from context in some situations,
+     * it may be defaulted and implicitly fallback to something else in others.
+     * For example, within the admin view, this falls back to the first store.
+     *
+     * Therefore, for safety, it's best to always be explicit about which store
+     * you're inspecting the config of with this function.
+     */
     public function getCredentialsForStore($storeId)
     {
-        $token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
-        $secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        $token = $this->_scopeConfig->getValue(
+            self::TOKEN,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+        $secret = $this->_scopeConfig->getValue(
+            self::SECRET,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
         return [$token, $secret];
     }
 
-    // If you can trust the context to correctly know the current store (e.g. only in the non-admin
-    // frontend), you can use this to find the LL credentials for the current context.
+    /**
+     * If you can trust the context to correctly know the current store
+     * (e.g. only in the non-admin frontend), you can use this to find
+     * the LL credentials for the current context.
+     */
     public function getCredentialsForContext()
     {
-        $token = $this->_scopeConfig->getValue(self::TOKEN, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $secret = $this->_scopeConfig->getValue(self::SECRET, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $token = $this->_scopeConfig->getValue(
+            self::TOKEN,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $secret = $this->_scopeConfig->getValue(
+            self::SECRET,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         return [$token, $secret];
     }
 
     public function getLoaderUrl()
     {
-        $path = isset($_SERVER['LOYALTYLION_LOADER_PATH']) ? $_SERVER['LOYALTYLION_LOADER_PATH'] : self::LOADER_PATH;
+        $path = isset($_SERVER['LOYALTYLION_LOADER_PATH'])
+            ? $_SERVER['LOYALTYLION_LOADER_PATH']
+            : self::LOADER_PATH;
         return $this->getSdkHost() . $path;
     }
 
     public function getSdkHost()
     {
-        return isset($_SERVER['LOYALTYLION_SDK_HOST']) ? $_SERVER['LOYALTYLION_SDK_HOST'] : self::SDK_HOST;
+        return isset($_SERVER['LOYALTYLION_SDK_HOST'])
+            ? $_SERVER['LOYALTYLION_SDK_HOST']
+            : self::SDK_HOST;
     }
 }

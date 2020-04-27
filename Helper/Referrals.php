@@ -12,9 +12,8 @@ class Referrals
 {
     private $_session;
 
-    public function __construct(
-        \Magento\Customer\Model\Session $session
-    ) {
+    public function __construct(\Magento\Customer\Model\Session $session)
+    {
         $this->_session = $session;
     }
 
@@ -40,7 +39,7 @@ class Referrals
         }
 
         // for now, let's have a 24 hour expiration time on the timestamp
-        if (time() - (int)$values[0] > 86400) {
+        if (time() - (int) $values[0] > 86400) {
             return null;
         }
 

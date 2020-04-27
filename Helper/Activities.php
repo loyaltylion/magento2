@@ -57,7 +57,10 @@ class Activities extends Client
      */
     public function update($name, $id, $data)
     {
-        $response = $this->connection->put('/activities/' . $name . '/' . $id, $data);
+        $response = $this->connection->put(
+            '/activities/' . $name . '/' . $id,
+            $data
+        );
 
         return $this->parseResponse($response);
     }

@@ -28,11 +28,13 @@ class RegisterObserver implements ObserverInterface
     {
         try {
             $customer = $observer->getEvent()->getCustomer();
-            $creds = $this->_config->getCredentialsForStore($customer->getStoreId());
+            $creds = $this->_config->getCredentialsForStore(
+                $customer->getStoreId()
+            );
             if (!$this->_config->isEnabled(...$creds)) {
                 return;
             }
-            list(, $events, ) = $this->_client->getClient(...$creds);
+            list(, $events) = $this->_client->getClient(...$creds);
 
             $data = [
                 'customer_id' => $customer->getId(),
@@ -40,11 +42,15 @@ class RegisterObserver implements ObserverInterface
                 'date' => date('c'),
                 // TODO: Check real IP header - this assumes no reverse proxy
                 'ip_address' => $_SERVER['REMOTE_ADDR'],
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
+                    ? $_SERVER['HTTP_USER_AGENT']
+                    : '',
             ];
 
             if ($this->_referrals->getLoyaltyLionReferralId()) {
-                $data['referral_id'] = $this->_referrals->getLoyaltyLionReferralId();
+                $data[
+                    'referral_id'
+                ] = $this->_referrals->getLoyaltyLionReferralId();
             }
 
             $tracking_id = $this->_referrals->getTrackingIdFromSession();
@@ -56,14 +62,21 @@ class RegisterObserver implements ObserverInterface
             $response = $events->track('$signup', $data);
 
             if ($response->success) {
-                $this->_logger->debug('[LoyaltyLion] Tracked event [signup] OK');
+                $this->_logger->debug(
+                    '[LoyaltyLion] Tracked event [signup] OK'
+                );
             } else {
                 $this->_logger->debug(
-                    '[LoyaltyLion] Failed to track event - status: ' . $response->status . ', error: ' . $response->error
+                    '[LoyaltyLion] Failed to track event - status: ' .
+                        $response->status .
+                        ', error: ' .
+                        $response->error
                 );
             }
         } catch (\Exception $e) {
-            $this->_logger->error('[LoyaltyLion] Unexpected error: ' . $e->getMessage());
+            $this->_logger->error(
+                '[LoyaltyLion] Unexpected error: ' . $e->getMessage()
+            );
         }
     }
 }

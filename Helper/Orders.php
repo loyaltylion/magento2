@@ -27,7 +27,8 @@ class Orders extends Client
     /**
      * Update an order by its merchant_id in LoyaltyLion
      *
-     * This is an idempotent update which is safe to call everytime an order is updated
+     * This is an idempotent update which is safe to call everytime an order
+     * is updated
      *
      * @param  [type] $id   [description]
      * @param  [type] $data [description]
@@ -63,14 +64,20 @@ class Orders extends Client
 
     public function addPayment($id, $data)
     {
-        $response = $this->connection->post('/orders/' . $id . '/payments', $data);
+        $response = $this->connection->post(
+            '/orders/' . $id . '/payments',
+            $data
+        );
 
         return $this->parseResponse($response);
     }
 
     public function addRefund($id, $data)
     {
-        $response = $this->connection->post('/orders/' . $id . '/refunds', $data);
+        $response = $this->connection->post(
+            '/orders/' . $id . '/refunds',
+            $data
+        );
 
         return $this->parseResponse($response);
     }

@@ -22,20 +22,28 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->referrals = $this->getMockBuilder('Loyaltylion\Core\Helper\Referrals')
+        $this->referrals = $this->getMockBuilder(
+            'Loyaltylion\Core\Helper\Referrals'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->observerMock = $this->createMock('\Magento\Framework\Event\Observer', [], [], '', false);
+        $this->observerMock = $this->createMock(
+            '\Magento\Framework\Event\Observer',
+            [],
+            [],
+            '',
+            false
+        );
     }
 
     public function testLogsAllErrors()
     {
-        $this->config->expects($this->once())
+        $this->config
+            ->expects($this->once())
             ->method('isEnabled')
             ->will($this->throwException(new \Exception('Oh no!')));
-        $this->logger->expects($this->once())
-            ->method('error');
+        $this->logger->expects($this->once())->method('error');
 
         $this->observer = new RegisterObserver(
             $this->client,

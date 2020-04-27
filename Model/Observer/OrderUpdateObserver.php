@@ -48,12 +48,18 @@ class OrderUpdateObserver implements ObserverInterface
             'refund_status' => 'not_refunded',
             'total_refunded' => 0,
             'ip_address' => $order->getRemoteIp(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+            'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
+                ? $_SERVER['HTTP_USER_AGENT']
+                : '',
         ];
 
-        $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
+        $data = array_merge(
+            $data,
+            $this->_orderTools->getPaymentStatus($order)
+        );
 
-        $data['cancellation_status'] = $order->getState() == 'canceled' ? 'cancelled' : 'not_cancelled';
+        $data['cancellation_status'] =
+            $order->getState() == 'canceled' ? 'cancelled' : 'not_cancelled';
 
         $total_refunded = $order->getBaseTotalRefunded();
 
@@ -69,7 +75,10 @@ class OrderUpdateObserver implements ObserverInterface
             }
         }
 
-        $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
+        $data = array_merge(
+            $data,
+            $this->_orderTools->getOrderMetadata($order)
+        );
 
         $response = $orders->update($order->getId(), $data);
 
@@ -78,7 +87,12 @@ class OrderUpdateObserver implements ObserverInterface
         } elseif ($response->status != 404) {
             // sometimes this will get fired before the order has been created, so we'll get a 404 back - no reason to
             // error, because this is expected behaviour
-            $this->_logger->error('[LoyaltyLion] Failed to update order - status: ' . $response->status . ', error: ' . $response->error);
+            $this->_logger->error(
+                '[LoyaltyLion] Failed to update order - status: ' .
+                    $response->status .
+                    ', error: ' .
+                    $response->error
+            );
         }
     }
 }
