@@ -4,21 +4,22 @@ namespace Loyaltylion\Core\Helper;
 
 class Activities extends Client
 {
-    private $connection;
+    private $_connection;
 
     public function __construct(Connection $connection)
     {
-        $this->connection = $connection;
+        $this->_connection = $connection;
     }
 
     /**
      * Track an activity
      *
-     * @param [type] $name       The activity name, e.g. "$signup"
+     * @param string $name       The activity name, e.g. "$signup"
      * @param array  $properties Activity data
      *
-     * @return object                   An object with information about the request. If the track
-     *                                  was successful, object->success will be true.
+     * @return object            An object with information about the request.
+     *                           If the track was successful, object->success
+     *                           will be true.
      */
     public function track($name, $data)
     {
@@ -42,7 +43,7 @@ class Activities extends Client
             $data['date'] = date('c');
         }
 
-        $response = $this->connection->post('/activities', $data);
+        $response = $this->_connection->post('/activities', $data);
 
         return $this->parseResponse($response);
     }
@@ -57,7 +58,7 @@ class Activities extends Client
      */
     public function update($name, $id, $data)
     {
-        $response = $this->connection->put(
+        $response = $this->_connection->put(
             '/activities/' . $name . '/' . $id,
             $data
         );

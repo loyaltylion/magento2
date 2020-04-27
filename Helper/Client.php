@@ -5,24 +5,19 @@ namespace Loyaltylion\Core\Helper;
 class Client
 {
     const API_HOST = 'api.loyaltylion.com';
-    private $connection;
-    private $base_uri;
-    private $config;
+    private $_base_uri;
 
-    public function __construct(\Loyaltylion\Core\Helper\Config $config)
+    public function __construct()
     {
-        $this->config = $config;
-        if (isset($_SERVER['LOYALTYLION_API_HOST'])) {
-            $this->base_uri =
-                'https://' . $_SERVER['LOYALTYLION_API_HOST'] . '/v2';
-        } else {
-            $this->base_uri = 'https://' . self::API_HOST . '/v2';
-        }
+        $host = isset($_SERVER['LOYALTYLION_API_HOST'])
+            ? $_SERVER['LOYALTYLION_API_HOST']
+            : self::API_HOST;
+        $this->_base_uri = 'https://' . $host . '/v2';
     }
 
     public function getClient($token, $secret)
     {
-        $connection = new Connection($token, $secret, $this->base_uri);
+        $connection = new Connection($token, $secret, $this->_base_uri);
         $events = new Activities($connection);
         $orders = new Orders($connection);
         return [$connection, $events, $orders];

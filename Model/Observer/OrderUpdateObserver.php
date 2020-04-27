@@ -44,40 +44,12 @@ class OrderUpdateObserver implements ObserverInterface
         }
         list(, , $orders) = $this->_client->getClient(...$creds);
 
-        $data = [
-            'refund_status' => 'not_refunded',
-            'total_refunded' => 0,
-            'ip_address' => $order->getRemoteIp(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
-                ? $_SERVER['HTTP_USER_AGENT']
-                : '',
-        ];
-
         $data = array_merge(
-            $data,
-            $this->_orderTools->getPaymentStatus($order)
-        );
-
-        $data['cancellation_status'] =
-            $order->getState() == 'canceled' ? 'cancelled' : 'not_cancelled';
-
-        $total_refunded = $order->getBaseTotalRefunded();
-
-        if ($total_refunded > 0) {
-            if ($total_refunded < $order->getBaseGrandTotal()) {
-                $data['refund_status'] = 'partially_refunded';
-                $data['total_refunded'] = $total_refunded;
-            } else {
-                // assume full refund. this should be fine as magento appears to only allow refunding up to
-                // the amount paid
-                $data['refund_status'] = 'refunded';
-                $data['total_refunded'] = $order->getBaseGrandTotal();
-            }
-        }
-
-        $data = array_merge(
-            $data,
-            $this->_orderTools->getOrderMetadata($order)
+            $this->_orderTools->getOrderClientData($order),
+            $this->_orderTools->getPaymentStatus($order),
+            $this->_orderTools->getCancellationStatus($order),
+            $this->_orderTools->getOrderMetadata($order),
+            $this->_orderTools->getRefundStatus($orders)
         );
 
         $response = $orders->update($order->getId(), $data);
@@ -85,8 +57,8 @@ class OrderUpdateObserver implements ObserverInterface
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Updated order OK');
         } elseif ($response->status != 404) {
-            // sometimes this will get fired before the order has been created, so we'll get a 404 back - no reason to
-            // error, because this is expected behaviour
+            // sometimes this will get fired before the order has been created,
+            // so we'll get a 404 back - no reason to error, because this is expected
             $this->_logger->error(
                 '[LoyaltyLion] Failed to update order - status: ' .
                     $response->status .

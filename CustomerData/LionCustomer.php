@@ -5,24 +5,24 @@ namespace Loyaltylion\Core\CustomerData;
 class LionCustomer implements
     \Magento\Customer\CustomerData\SectionSourceInterface
 {
-    private $session;
-    private $config;
+    private $_session;
+    private $_config;
 
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
         \Loyaltylion\Core\Helper\Config $config
     ) {
-        $this->session = $customerSession;
-        $this->config = $config;
+        $this->_session = $customerSession;
+        $this->_config = $config;
     }
 
     public function getSectionData()
     {
-        $customer = $this->session->getCustomer();
-        list(, $secret) = $this->config->getCredentialsForContext();
+        $customer = $this->_session->getCustomer();
+        list(, $secret) = $this->_config->getCredentialsForContext();
         $now = date('c');
         return [
-            'logged_in' => $this->session->isLoggedIn(),
+            'logged_in' => $this->_session->isLoggedIn(),
             'date' => $now,
             'customer' => [
                 'id' => $customer->getId(),

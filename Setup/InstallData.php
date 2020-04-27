@@ -9,19 +9,25 @@ use Magento\Integration\Model\ConfigBasedIntegrationManager;
 class InstallData implements InstallDataInterface
 {
     /**
+     * ConfigBasedIntegrationManager lets us
+     * save our integration to the integrations list, ready
+     * for activation by the merchant
+     *
      * @var ConfigBasedIntegrationManager
      */
 
-    private $integrationManager;
+    private $_integrationManager;
 
     /**
+     * InstallData constructor
+     *
      * @param ConfigBasedIntegrationManager $integrationManager
      */
 
     public function __construct(
         ConfigBasedIntegrationManager $integrationManager
     ) {
-        $this->integrationManager = $integrationManager;
+        $this->_integrationManager = $integrationManager;
     }
 
     /**
@@ -32,6 +38,6 @@ class InstallData implements InstallDataInterface
         ModuleDataSetupInterface $setup,
         ModuleContextInterface $context
     ) {
-        $this->integrationManager->processIntegrationConfig(['LoyaltyLion']);
+        $this->_integrationManager->processIntegrationConfig(['LoyaltyLion']);
     }
 }

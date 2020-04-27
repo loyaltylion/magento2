@@ -4,37 +4,36 @@ namespace Loyaltylion\Core\Helper;
 
 class Connection
 {
-    private $token;
-    private $secret;
-    private $base_uri;
-    private $timeout = 5;
+    private $_token;
+    private $_secret;
+    private $_base_uri;
+    private $_timeout = 5;
 
     public function __construct($token, $secret, $base_uri)
     {
-        $this->token = $token;
-        $this->secret = $secret;
-        $this->base_uri = $base_uri;
+        $this->_token = $token;
+        $this->_secret = $secret;
+        $this->_base_uri = $base_uri;
     }
 
     public function post($path, $data = [])
     {
-        return $this->request('POST', $path, $data);
+        return $this->_request('POST', $path, $data);
     }
 
     public function put($path, $data = [])
     {
-        return $this->request('PUT', $path, $data);
+        return $this->_request('PUT', $path, $data);
     }
 
-    private function request($method, $path, $data)
+    private function _request($method, $path, $data)
     {
         $options = [
-            CURLOPT_URL => $this->base_uri . $path,
+            CURLOPT_URL => $this->_base_uri . $path,
             CURLOPT_USERAGENT => 'loyaltylion-php-client-v2.0.0',
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => $this->timeout,
-            // CURLOPT_HEADER => false,
-            CURLOPT_USERPWD => $this->token . ':' . $this->secret,
+            CURLOPT_TIMEOUT => $this->_timeout,
+            CURLOPT_USERPWD => $this->_token . ':' . $this->_secret,
         ];
 
         switch ($method) {

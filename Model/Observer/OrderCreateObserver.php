@@ -48,52 +48,13 @@ class OrderCreateObserver implements ObserverInterface
         }
         list(, , $orders) = $this->_client->getClient(...$creds);
 
-        $this->_logger->debug("Order", ['order' => $order->toArray()]);
-
-        $data = [
-            'merchant_id' => $order->getId(),
-            'customer_id' => $order->getCustomerId(),
-            'customer_email' => $order->getCustomerEmail(),
-            'total' => (string) $order->getBaseGrandTotal(),
-            'total_shipping' => (string) $order->getBaseShippingAmount(),
-            'number' => (string) $order->getIncrementId(),
-            'guest' => (bool) $order->getCustomerIsGuest(),
-            'ip_address' => $order->getRemoteIp(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
-                ? $_SERVER['HTTP_USER_AGENT']
-                : '',
-        ];
-
         $data = array_merge(
-            $data,
-            $this->_orderTools->getOrderMetadata($order)
+            $this->_orderTools->getBaseOrderData($order),
+            $this->_orderTools->getOrderMetadata($order),
+            $this->_orderTools->getPaymentStatus($order),
+            $this->_orderTools->getOrderClientData($order),
+            $this->_orderTools->getDiscountCodes($order)
         );
-
-        $data = array_merge(
-            $data,
-            $this->_orderTools->getPaymentStatus($order)
-        );
-
-        if ($order->getCouponCode()) {
-            $data['discount_codes'] = [
-                [
-                    'code' => $order->getCouponCode(),
-                    'amount' => abs($order->getDiscountAmount()),
-                ],
-            ];
-        }
-
-        if ($this->_referrals->getLoyaltyLionReferralId()) {
-            $data[
-                'referral_id'
-            ] = $this->_referrals->getLoyaltyLionReferralId();
-        }
-
-        $tracking_id = $this->_referrals->getTrackingIdFromSession();
-
-        if ($tracking_id) {
-            $data['tracking_id'] = $tracking_id;
-        }
 
         $response = $orders->create($data);
 

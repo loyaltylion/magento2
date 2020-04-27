@@ -29,7 +29,7 @@ class Config
     }
 
     /**
-     * getCredentialsForStore should be your default option for most cases:
+     * This should be your default option for most cases:
      * while the current store can be inferred from context in some situations,
      * it may be defaulted and implicitly fallback to something else in others.
      * For example, within the admin view, this falls back to the first store.
