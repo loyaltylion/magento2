@@ -11,17 +11,23 @@ class RegisterObserver implements ObserverInterface
     private $_config;
     private $_logger;
     private $_referrals;
+    private $_remoteAddress;
+    private $_httpHeader;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Helper\Config $config,
         \Psr\Log\LoggerInterface $logger,
-        \Loyaltylion\Core\Helper\Referrals $referrals
+        \Loyaltylion\Core\Helper\Referrals $referrals,
+        \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
+        \Magento\Framework\HTTP\Header $httpHeader
     ) {
         $this->_client = $client;
         $this->_config = $config;
         $this->_logger = $logger;
         $this->_referrals = $referrals;
+        $this->_remoteAddress = $remoteAddress;
+        $this->_httpHeader = $httpHeader;
     }
 
     public function execute(Observer $observer)
@@ -40,11 +46,8 @@ class RegisterObserver implements ObserverInterface
                 'customer_id' => $customer->getId(),
                 'customer_email' => $customer->getEmail(),
                 'date' => date('c'),
-                // TODO: Check real IP header - this assumes no reverse proxy
-                'ip_address' => $_SERVER['REMOTE_ADDR'],
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
-                    ? $_SERVER['HTTP_USER_AGENT']
-                    : '',
+                'ip_address' => $this->_remoteAddress->getRemoteAddress(),
+                'user_agent' => $this->_httpHeader->getHttpUserAgent(),
             ];
 
             if ($this->_referrals->getLoyaltyLionReferralId()) {

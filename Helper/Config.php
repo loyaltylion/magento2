@@ -14,13 +14,17 @@ class Config
     const SECRET = 'loyaltylion_core/general/secret';
     const LOADER_PATH = '/static/2/loader.js';
     const SDK_HOST = 'sdk.loyaltylion.net';
+    const API_HOST = 'api.loyaltylion.com';
 
     private $_scopeConfig;
+    private $_request;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $request
     ) {
         $this->_scopeConfig = $scopeConfig;
+        $this->_request = $request;
     }
 
     public function isEnabled($token, $secret)
@@ -72,16 +76,23 @@ class Config
 
     public function getLoaderUrl()
     {
-        $path = isset($_SERVER['LOYALTYLION_LOADER_PATH'])
-            ? $_SERVER['LOYALTYLION_LOADER_PATH']
+        $path = isset($this->_request->envParams['LOYALTYLION_LOADER_PATH'])
+            ? $this->_request->envParams['LOYALTYLION_LOADER_PATH']
             : self::LOADER_PATH;
         return $this->getSdkHost() . $path;
     }
 
     public function getSdkHost()
     {
-        return isset($_SERVER['LOYALTYLION_SDK_HOST'])
-            ? $_SERVER['LOYALTYLION_SDK_HOST']
+        return isset($this->_request->envParams['LOYALTYLION_SDK_HOST'])
+            ? $this->_request->envParams['LOYALTYLION_SDK_HOST']
             : self::SDK_HOST;
+    }
+
+    public function getApiHost()
+    {
+        return isset($this->_request->envParams['LOYALTYLION_API_HOST'])
+            ? $this->_request->envParams['LOYALTYLION_API_HOST']
+            : self::API_HOST;
     }
 }
