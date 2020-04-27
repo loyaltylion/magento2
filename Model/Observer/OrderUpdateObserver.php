@@ -9,20 +9,17 @@ class OrderUpdateObserver implements ObserverInterface
 {
     private $_client;
     private $_config;
-    private $_telemetry;
     private $_orderTools;
     private $_logger;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Helper\Config $config,
-        \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->_client = $client;
         $this->_config = $config;
-        $this->_telemetry = $telemetry;
         $this->_orderTools = $orderTools;
         $this->_logger = $logger;
     }
