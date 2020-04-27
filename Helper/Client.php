@@ -16,7 +16,7 @@ class Client
         if(isset($_SERVER['LOYALTYLION_API_HOST'])) {
           $this->base_uri = 'https://' .  $_SERVER['LOYALTYLION_API_HOST'] . '/v2';
         } else {
-          $this->base_uri = 'https://' .  self::SDK_HOST . '/v2';
+          $this->base_uri = 'https://' .  self::API_HOST . '/v2';
         }
     }
 
