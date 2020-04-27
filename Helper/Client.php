@@ -4,7 +4,6 @@ namespace Loyaltylion\Core\Helper;
 
 class Client
 {
-
     const API_HOST = 'api.loyaltylion.com';
     private $connection;
     private $base_uri;
@@ -13,10 +12,10 @@ class Client
     public function __construct(\Loyaltylion\Core\Helper\Config $config)
     {
         $this->config = $config;
-        if(isset($_SERVER['LOYALTYLION_API_HOST'])) {
-          $this->base_uri = 'https://' .  $_SERVER['LOYALTYLION_API_HOST'] . '/v2';
+        if (isset($_SERVER['LOYALTYLION_API_HOST'])) {
+            $this->base_uri = 'https://' . $_SERVER['LOYALTYLION_API_HOST'] . '/v2';
         } else {
-          $this->base_uri = 'https://' .  self::API_HOST . '/v2';
+            $this->base_uri = 'https://' . self::API_HOST . '/v2';
         }
     }
 
@@ -32,16 +31,16 @@ class Client
     {
         if (isset($response->error)) {
             // this kind of error is from curl itself, e.g. a request timeout, so just return that error
-            return (object)array(
+            return (object)[
                 'success' => false,
                 'status' => $response->status,
                 'error' => $response->error,
-            );
+            ];
         }
 
-        $result = array(
+        $result = [
             'success' => (int)$response->status >= 200 && (int)$response->status <= 204
-        );
+        ];
 
         if (!$result['success']) {
             // even if curl succeeded, it can still fail if the request was invalid - we

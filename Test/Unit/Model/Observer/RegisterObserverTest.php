@@ -1,6 +1,7 @@
 <?php
 
 namespace Loyaltylion\Core\Test\Unit\Model\Observer;
+
 use Loyaltylion\Core\Model\Observer\RegisterObserver;
 
 class RegisterObserverTest extends \PHPUnit\Framework\TestCase
@@ -9,7 +10,6 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-
         $this->client = $this->getMockBuilder('Loyaltylion\Core\Helper\Client')
             ->disableOriginalConstructor()
             ->getMock();
@@ -25,7 +25,6 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
         $this->referrals = $this->getMockBuilder('Loyaltylion\Core\Helper\Referrals')
             ->disableOriginalConstructor()
             ->getMock();
-
 
         $this->observerMock = $this->createMock('\Magento\Framework\Event\Observer', [], [], '', false);
     }

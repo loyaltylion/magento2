@@ -8,7 +8,6 @@
 
 namespace Loyaltylion\Core\Helper;
 
-
 class Config
 {
     const TOKEN = 'loyaltylion_core/general/token';
@@ -20,8 +19,7 @@ class Config
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    )
-    {
+    ) {
         $this->_scopeConfig = $scopeConfig;
     }
 

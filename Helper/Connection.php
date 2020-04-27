@@ -4,7 +4,6 @@ namespace Loyaltylion\Core\Helper;
 
 class Connection
 {
-
     private $token;
     private $secret;
     private $base_uri;
@@ -17,50 +16,49 @@ class Connection
         $this->base_uri = $base_uri;
     }
 
-    public function post($path, $data = array())
+    public function post($path, $data = [])
     {
         return $this->request('POST', $path, $data);
     }
 
-    public function put($path, $data = array())
+    public function put($path, $data = [])
     {
         return $this->request('PUT', $path, $data);
     }
 
     private function request($method, $path, $data)
     {
-
-        $options = array(
+        $options = [
             CURLOPT_URL => $this->base_uri . $path,
             CURLOPT_USERAGENT => 'loyaltylion-php-client-v2.0.0',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => $this->timeout,
             // CURLOPT_HEADER => false,
             CURLOPT_USERPWD => $this->token . ':' . $this->secret,
-        );
+        ];
 
         switch ($method) {
-            case 'POST':
-                $options += array(
-                    CURLOPT_POST => true,
-                );
-                break;
-            case 'PUT':
-                $options += array(
-                    CURLOPT_CUSTOMREQUEST => 'PUT',
-                );
+        case 'POST':
+            $options += [
+                CURLOPT_POST => true,
+            ];
+            break;
+        case 'PUT':
+            $options += [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+            ];
         }
 
         if (!empty($data)) {
             $body = json_encode($data);
 
-            $options += array(
+            $options += [
                 CURLOPT_POSTFIELDS => $body,
-                CURLOPT_HTTPHEADER => array(
+                CURLOPT_HTTPHEADER => [
                     'Content-Type: application/json',
                     'Content-Length: ' . strlen($body),
-                ),
-            );
+                ],
+            ];
         }
 
         // now make the request
@@ -73,16 +71,16 @@ class Connection
         $error_msg = curl_error($curl);
 
         if ($error_code !== 0) {
-            $response = array(
+            $response = [
                 'status' => $headers['http_code'],
                 'error' => $error_msg,
-            );
+            ];
         } else {
-            $response = array(
+            $response = [
                 'status' => $headers['http_code'],
                 'headers' => $headers,
                 'body' => $body,
-            );
+            ];
         }
 
         return (object)$response;

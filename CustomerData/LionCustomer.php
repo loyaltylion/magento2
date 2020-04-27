@@ -10,8 +10,7 @@ class LionCustomer implements \Magento\Customer\CustomerData\SectionSourceInterf
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
         \Loyaltylion\Core\Helper\Config $config
-    )
-    {
+    ) {
         $this->session = $customerSession;
         $this->config = $config;
     }

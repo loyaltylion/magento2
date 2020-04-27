@@ -1,6 +1,7 @@
 <?php
 
 namespace Loyaltylion\Core\Helper;
+
 class Activities extends Client
 {
     private $connection;
@@ -13,24 +14,33 @@ class Activities extends Client
     /**
      * Track an activity
      *
-     * @param  [type] $name             The activity name, e.g. "$signup"
-     * @param  array $properties Activity data
+     * @param [type] $name       The activity name, e.g. "$signup"
+     * @param array  $properties Activity data
      *
      * @return object                   An object with information about the request. If the track
      *                                  was successful, object->success will be true.
      */
     public function track($name, $data)
     {
-
-        if (!is_array($data)) throw new \Exception('Activity data must be an array');
+        if (!is_array($data)) {
+            throw new \Exception('Activity data must be an array');
+        }
 
         $data['name'] = $name;
 
-        if (empty($data['name'])) throw new \Exception('Activity name is required');
-        if (empty($data['customer_id'])) throw new \Exception('customer_id is required');
-        if (empty($data['customer_email'])) throw new \Exception('customer_email is required');
+        if (empty($data['name'])) {
+            throw new \Exception('Activity name is required');
+        }
+        if (empty($data['customer_id'])) {
+            throw new \Exception('customer_id is required');
+        }
+        if (empty($data['customer_email'])) {
+            throw new \Exception('customer_email is required');
+        }
 
-        if (empty($data['date'])) $data['date'] = date('c');
+        if (empty($data['date'])) {
+            $data['date'] = date('c');
+        }
 
         $response = $this->connection->post('/activities', $data);
 

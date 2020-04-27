@@ -1,17 +1,16 @@
 <?php
 namespace Loyaltylion\Core\Setup;
 
+use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Integration\Model\ConfigBasedIntegrationManager;
-use Magento\Framework\Setup\InstallDataInterface;
 
 class InstallData implements InstallDataInterface
 {
     /**
      * @var ConfigBasedIntegrationManager
      */
-
 
     private $integrationManager;
 
@@ -33,4 +32,3 @@ class InstallData implements InstallDataInterface
         $this->integrationManager->processIntegrationConfig(['LoyaltyLion']);
     }
 }
- 

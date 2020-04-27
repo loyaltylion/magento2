@@ -10,8 +10,7 @@ class Sdk extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         \Loyaltylion\Core\Helper\Config $config,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->_config = $config;
     }

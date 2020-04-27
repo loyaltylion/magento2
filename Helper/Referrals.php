@@ -8,15 +8,13 @@
 
 namespace Loyaltylion\Core\Helper;
 
-
 class Referrals
 {
     private $_session;
 
     public function __construct(
         \Magento\Customer\Model\Session $session
-    )
-    {
+    ) {
         $this->_session = $session;
     }
 
@@ -27,20 +25,24 @@ class Referrals
      */
     public function getTrackingIdFromSession()
     {
-        if (!$this->_session->getLoyaltyLionTrackingId())
+        if (!$this->_session->getLoyaltyLionTrackingId()) {
             return null;
+        }
 
         $values = explode(':::', $this->_session->getLoyaltyLionTrackingId());
 
-        if (empty($values))
+        if (empty($values)) {
             return null;
+        }
 
-        if (count($values) != 2)
+        if (count($values) != 2) {
             return $values[0];
+        }
 
         // for now, let's have a 24 hour expiration time on the timestamp
-        if (time() - (int)$values[0] > 86400)
+        if (time() - (int)$values[0] > 86400) {
             return null;
+        }
 
         return $values[1];
     }
