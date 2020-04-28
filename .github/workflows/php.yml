@@ -26,3 +26,6 @@ jobs:
 
       - name: Run linters
         run: ./vendor/bin/phpcs -ns .
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit Test/
