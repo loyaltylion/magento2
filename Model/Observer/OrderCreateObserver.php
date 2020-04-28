@@ -7,19 +7,15 @@ use Magento\Framework\Event\ObserverInterface;
 
 class OrderCreateObserver implements ObserverInterface
 {
-    private $_client;
     private $_config;
-    private $_referrals;
     private $_orderTools;
     private $_logger;
 
     public function __construct(
-        \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Helper\Config $config,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
     ) {
-        $this->_client = $client;
         $this->_config = $config;
         $this->_orderTools = $orderTools;
         $this->_logger = $logger;
@@ -37,11 +33,14 @@ class OrderCreateObserver implements ObserverInterface
         // our order here: it's possible to create orders from different contexts,
         // so the general purpose scopeConfig->getValue would potentially return
         // a different storeId here
-        $creds = $this->_config->getCredentialsForStore($order->getStoreId());
-        if (!$this->_config->isEnabled(...$creds)) {
+        list(, , $orders) = $this->_config->getClientForStore(
+            $order->getStoreId()
+        );
+        if (!$orders) {
+            $this->_logger->debug('[LoyaltyLion] skip order create, disabled');
+            // We aren't enabled in the website/store this order was placed in
             return;
         }
-        list(, , $orders) = $this->_client->getClient(...$creds);
 
         $data = array_merge(
             $this->_orderTools->getBaseOrderData($order),

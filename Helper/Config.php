@@ -18,13 +18,16 @@ class Config
 
     private $_scopeConfig;
     private $_request;
+    private $_client;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $request
+        \Magento\Framework\HTTP\PhpEnvironment\Request $request,
+        \Loyaltylion\Core\Helper\Client $client
     ) {
         $this->_scopeConfig = $scopeConfig;
         $this->_request = $request;
+        $this->_client = $client;
     }
 
     public function isEnabled($token, $secret)
@@ -76,23 +79,31 @@ class Config
 
     public function getLoaderUrl()
     {
-        $path = isset($this->_request->envParams['LOYALTYLION_LOADER_PATH'])
-            ? $this->_request->envParams['LOYALTYLION_LOADER_PATH']
-            : self::LOADER_PATH;
+        $path = getenv('LOYALTYLION_LOADER_PATH') ?: self::LOADER_PATH;
         return $this->getSdkHost() . $path;
     }
 
     public function getSdkHost()
     {
-        return isset($this->_request->envParams['LOYALTYLION_SDK_HOST'])
-            ? $this->_request->envParams['LOYALTYLION_SDK_HOST']
-            : self::SDK_HOST;
+        return getenv('LOYALTYLION_SDK_HOST') ?: self::SDK_HOST;
     }
 
-    public function getApiHost()
+    public function getClientForStore($storeId)
     {
-        return isset($this->_request->envParams['LOYALTYLION_API_HOST'])
-            ? $this->_request->envParams['LOYALTYLION_API_HOST']
-            : self::API_HOST;
+        $creds = $this->getCredentialsForStore($storeId);
+        if (!$this->isEnabled(...$creds)) {
+            return [null, null, null];
+        }
+        return $this->_client->getClient($this->_getApiBaseUrl(), ...$creds);
+    }
+
+    private function _getApiHost()
+    {
+        return getenv('LOYALTYLION_API_HOST') ?: self::API_HOST;
+    }
+
+    private function _getApiBaseUrl()
+    {
+        return 'https://' . $this->_getApiHost() . '/v2';
     }
 }

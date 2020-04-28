@@ -6,16 +6,16 @@ class OrderTools
 {
     private $_telemetry;
     private $_httpHeader;
-    private $_referrals;
+    private $_tracking;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Magento\Framework\HTTP\Header $httpHeader,
-        \Loyaltylion\Core\Helper\Referrals $referrals
+        \Loyaltylion\Core\Helper\Tracking $tracking
     ) {
         $this->_telemetry = $telemetry;
         $this->_httpHeader = $httpHeader;
-        $this->_referrals = $referrals;
+        $this->_tracking = $tracking;
     }
 
     public function getPaymentStatus($order)
@@ -76,21 +76,11 @@ class OrderTools
 
     public function getOrderClientData($order)
     {
-        $client_data = [
+        // getTrackingData already returns an IP, but the initial IP an order was
+        // placed with is recorded on the order model itself -- so we'll report that.
+        return array_merge($this->_tracking->getTrackingData(), [
             'ip_address' => $order->getRemoteIp(),
-            'user_agent' => $this->_httpHeader->getHttpUserAgent(),
-        ];
-
-        $referralId = $this->_referrals->getLoyaltyLionReferralId();
-        if ($referralId) {
-            $client_data['referral_id'] = $referralId;
-        }
-
-        $tracking_id = $this->_referrals->getTrackingIdFromSession();
-        if ($tracking_id) {
-            $client_data['tracking_id'] = $tracking_id;
-        }
-        return $client_data;
+        ]);
     }
 
     public function getDiscountCodes($order)
