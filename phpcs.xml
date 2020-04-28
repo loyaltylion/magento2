@@ -12,6 +12,8 @@
    <exclude name="PEAR.Formatting.MultiLineAssignment.EqualSignLine"/>
    <exclude name="PEAR.WhiteSpace.ScopeIndent.IncorrectExact"/>
    <exclude name="PEAR.ControlStructures.MultiLineCondition.SpaceBeforeOpenBrace"/>
+   <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
+   <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
  </rule>
  <exclude-pattern>vendor/*</exclude-pattern>
 </ruleset>
