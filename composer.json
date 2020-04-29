@@ -28,6 +28,7 @@
     "magento/magento-coding-standard": "^5.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "phpmd/phpmd": "^2.8",
+    "phpstan/phpstan": "^0.12.19",
     "phpunit/phpunit": "^8.5",
     "sirbrillig/phpcs-variable-analysis": "^2.8",
     "squizlabs/php_codesniffer": "^3.5"
@@ -37,5 +38,8 @@
       "type": "composer",
       "url": "https://repo.magento.com/"
     }
-  ]
+  ],
+  "require": {
+    "magento/module-store": "^101"
+  }
 }

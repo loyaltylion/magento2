@@ -7,6 +7,12 @@ use Loyaltylion\Core\Model\Observer\RegisterObserver;
 class RegisterObserverTest extends \PHPUnit\Framework\TestCase
 {
     protected $observer;
+    protected $events;
+    protected $successResponse;
+    protected $config;
+    protected $logger;
+    protected $tracking;
+    protected $observerMock;
 
     public function setUp(): void
     {
@@ -40,11 +46,7 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->observerMock = $this->createMock(
-            '\Magento\Framework\Event\Observer',
-            [],
-            [],
-            '',
-            false
+            '\Magento\Framework\Event\Observer'
         );
 
         $event = $this->getMockBuilder(\Magento\Framework\Event::class)
