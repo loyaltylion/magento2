@@ -1,6 +1,5 @@
 {
   "name": "magento2",
-  "version": "1.0.0",
   "description": "LoyaltyLion for Magento 2",
   "main": "index.js",
   "repository": "git@github.com:loyaltylion/magento2.git",
