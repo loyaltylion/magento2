@@ -7,56 +7,64 @@ use Magento\Framework\Event\ObserverInterface;
 
 class RegisterObserver implements ObserverInterface
 {
-    private $_client, $_config, $_logger, $_referrals;
+    private $_config;
+    private $_logger;
+    private $_tracking;
 
     public function __construct(
-        \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Helper\Config $config,
         \Psr\Log\LoggerInterface $logger,
-        \Loyaltylion\Core\Helper\Referrals $referrals
-    )
-    {
-        $this->_client = $client;
+        \Loyaltylion\Core\Helper\Tracking $tracking
+    ) {
         $this->_config = $config;
         $this->_logger = $logger;
-        $this->_referrals = $referrals;
+        $this->_tracking = $tracking;
     }
 
     public function execute(Observer $observer)
     {
         try {
             $customer = $observer->getEvent()->getCustomer();
-            $creds = $this->_config->getCredentialsForStore($customer->getStoreId());
-            if (!$this->_config->isEnabled(...$creds)) return;
-            list(, $events,) = $this->_client->getClient(...$creds);
+            list(, $events) = $this->_config->getClientForStore(
+                $customer->getStoreId()
+            );
+            if (!$events) {
+                // We aren't enabled in the website/store this customer registered at
+                return;
+            }
 
-            $data = array(
-                'customer_id' => $customer->getId(),
-                'customer_email' => $customer->getEmail(),
-                'date' => date('c'),
-                // TODO: Check real IP header - this assumes no reverse proxy
-                'ip_address' => $_SERVER['REMOTE_ADDR'],
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+            $response = $events->track(
+                '$signup',
+                $this->_buildPayload($customer)
             );
 
-            if ($this->_referrals->getLoyaltyLionReferralId())
-                $data['referral_id'] = $this->_referrals->getLoyaltyLionReferralId();
-
-            $tracking_id = $this->_referrals->getTrackingIdFromSession();
-
-            if ($tracking_id)
-                $data['tracking_id'] = $tracking_id;
-
-            $response = $events->track('$signup', $data);
-
             if ($response->success) {
-                $this->_logger->debug('[LoyaltyLion] Tracked event [signup] OK');
+                $this->_logger->debug(
+                    '[LoyaltyLion] Tracked event [signup] OK'
+                );
             } else {
                 $this->_logger->debug(
-                    '[LoyaltyLion] Failed to track event - status: ' . $response->status . ', error: ' . $response->error);
+                    '[LoyaltyLion] Failed to track event - status: ' .
+                        $response->status .
+                        ', error: ' .
+                        $response->error
+                );
             }
         } catch (\Exception $e) {
-            $this->_logger->error('[LoyaltyLion] Unexpected error: ' . $e->getMessage());
+            $this->_logger->error(
+                '[LoyaltyLion] Unexpected error: ' . $e->getMessage()
+            );
         }
+    }
+
+    private function _buildPayload($customer)
+    {
+        $data = [
+            'customer_id' => $customer->getId(),
+            'customer_email' => $customer->getEmail(),
+            'date' => date('c'),
+        ];
+
+        return array_merge($data, $this->_tracking->getTrackingData());
     }
 }

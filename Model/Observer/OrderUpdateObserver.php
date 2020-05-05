@@ -5,22 +5,18 @@ namespace Loyaltylion\Core\Model\Observer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
-
 class OrderUpdateObserver implements ObserverInterface
 {
-    private $_client, $_config, $_telemetry, $_orderTools, $_logger;
+    private $_config;
+    private $_orderTools;
+    private $_logger;
 
     public function __construct(
-        \Loyaltylion\Core\Helper\Client $client,
         \Loyaltylion\Core\Helper\Config $config,
-        \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
         \Psr\Log\LoggerInterface $logger
-    )
-    {
-        $this->_client = $client;
+    ) {
         $this->_config = $config;
-        $this->_telemetry = $telemetry;
         $this->_orderTools = $orderTools;
         $this->_logger = $logger;
     }
@@ -28,51 +24,43 @@ class OrderUpdateObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
-        if (!$order) return;
+        if (!$order) {
+            return;
+        }
 
         // It's important to fetch our credentials with the storeId saved to
         // our order here: it's possible to update orders from different contexts,
         // so the general purpose scopeConfig->getValue would potentially return
         // a different storeId here
-        $creds = $this->_config->getCredentialsForStore($order->getStoreId());
-        if (!$this->_config->isEnabled(...$creds)) return;
-        list(, , $orders) = $this->_client->getClient(...$creds);
-
-        $data = array(
-            'refund_status' => 'not_refunded',
-            'total_refunded' => 0,
-            'ip_address' => $order->getRemoteIp(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+        list(, , $orders) = $this->_config->getClientForStore(
+            $order->getStoreId()
         );
-
-        $data = array_merge($data, $this->_orderTools->getPaymentStatus($order));
-
-        $data['cancellation_status'] = $order->getState() == 'canceled' ? 'cancelled' : 'not_cancelled';
-
-        $total_refunded = $order->getBaseTotalRefunded();
-
-        if ($total_refunded > 0) {
-            if ($total_refunded < $order->getBaseGrandTotal()) {
-                $data['refund_status'] = 'partially_refunded';
-                $data['total_refunded'] = $total_refunded;
-            } else {
-                // assume full refund. this should be fine as magento appears to only allow refunding up to
-                // the amount paid
-                $data['refund_status'] = 'refunded';
-                $data['total_refunded'] = $order->getBaseGrandTotal();
-            }
+        if (!$orders) {
+            // We aren't enabled in the website/store this order was placed in
+            return;
         }
 
-        $data = array_merge($data, $this->_orderTools->getOrderMetadata($order));
+        $data = array_merge(
+            $this->_orderTools->getOrderClientData($order),
+            $this->_orderTools->getPaymentStatus($order),
+            $this->_orderTools->getCancellationStatus($order),
+            $this->_orderTools->getOrderMetadata($order),
+            $this->_orderTools->getRefundStatus($order)
+        );
 
         $response = $orders->update($order->getId(), $data);
 
         if ($response->success) {
             $this->_logger->debug('[LoyaltyLion] Updated order OK');
-        } else if ($response->status != 404) {
-            // sometimes this will get fired before the order has been created, so we'll get a 404 back - no reason to
-            // error, because this is expected behaviour
-            $this->_logger->error('[LoyaltyLion] Failed to update order - status: ' . $response->status . ', error: ' . $response->error);
+        } elseif ($response->status != 404) {
+            // sometimes this will get fired before the order has been created,
+            // so we'll get a 404 back - no reason to error, because this is expected
+            $this->_logger->error(
+                '[LoyaltyLion] Failed to update order - status: ' .
+                    $response->status .
+                    ', error: ' .
+                    $response->error
+            );
         }
     }
 }
