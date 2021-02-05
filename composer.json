@@ -22,7 +22,7 @@
     "files": ["registration.php"]
   },
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
     "friendsofphp/php-cs-fixer": "^2.16",
     "magento/framework": ">=100.1.0",
     "magento/magento-coding-standard": "^5.0",
