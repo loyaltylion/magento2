@@ -2,14 +2,14 @@
 # yarn lockfile v1
 
 
-"@prettier/plugin-php@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@prettier/plugin-php/-/plugin-php-0.16.1.tgz#0255749fe1a36c00c7ddc049ec8dc2928a8ac512"
-  integrity sha512-U0G5MnWEw3H4o53ZKmIDNBAN9w/7jkiFAhWPG6DJ+FyB9RmdhDouW05wLq8UraxjigzmXNZzT+ZQor697iW9Hg==
+"@prettier/plugin-php@^0.18.3":
+  version "0.18.3"
+  resolved "https://registry.yarnpkg.com/@prettier/plugin-php/-/plugin-php-0.18.3.tgz#a6cc50fe6b6e0f227a7207346c9521a11146a5c5"
+  integrity sha512-8jJ88iNVu3xC4DgA6f4eGk1yWQSno3Kd7XpUysokC8q0GXIr07zk7qdsfH+UooCf91sB0m2fZ2fdDmDMPOHhMA==
   dependencies:
     linguist-languages "^7.5.1"
     mem "^8.0.0"
-    php-parser "3.0.2"
+    php-parser "3.1.0-beta.5"
 
 linguist-languages@^7.5.1:
   version "7.9.0"
@@ -41,10 +41,10 @@ p-defer@^1.0.0:
   resolved "https://registry.yarnpkg.com/p-defer/-/p-defer-1.0.0.tgz#9f6eb182f6c9aa8cd743004a7d4f96b196b0fb0c"
   integrity sha1-n26xgvbJqozXQwBKfU+WsZaw+ww=
 
-php-parser@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/php-parser/-/php-parser-3.0.2.tgz#a86dbbc110e57378cba71ab4cd9b0d18f3872ac3"
-  integrity sha512-a7y1+odEGsceLDLpu7oNyspZ0pK8FMWJOoim4/yd82AtnEZNLdCLZ67arnOQZ9K0lHJiSp4/7lVUpGELVxE14w==
+php-parser@3.1.0-beta.5:
+  version "3.1.0-beta.5"
+  resolved "https://registry.yarnpkg.com/php-parser/-/php-parser-3.1.0-beta.5.tgz#81fd04ede37f3796ba2585b985831caffd62ba50"
+  integrity sha512-3F3+yThjD7wn0sMuIG5iMQqutmH+RJUAbEyPW5S/greTp5ZArkpEweylQh+do22q9UJlJT1PrLN/AwnzDUti6Q==
 
 prettier@^2.2.1:
   version "2.2.1"
