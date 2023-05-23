@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@prettier/plugin-php@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@prettier/plugin-php/-/plugin-php-0.16.1.tgz#0255749fe1a36c00c7ddc049ec8dc2928a8ac512"
-  integrity sha512-U0G5MnWEw3H4o53ZKmIDNBAN9w/7jkiFAhWPG6DJ+FyB9RmdhDouW05wLq8UraxjigzmXNZzT+ZQor697iW9Hg==
+"@prettier/plugin-php@^0.19.5":
+  version "0.19.5"
+  resolved "https://registry.yarnpkg.com/@prettier/plugin-php/-/plugin-php-0.19.5.tgz#2f8833f616d402a383de2ed00671f07e44dd76db"
+  integrity sha512-AnmiB76G7qX2d7FbvGgABc3l4dVshOlBqxajiHe8nfMVTzmge7xDhiC28aP8OZafhIRksLKNRB1ZEemfN+j5pg==
   dependencies:
-    linguist-languages "^7.5.1"
+    linguist-languages "^7.21.0"
     mem "^8.0.0"
-    php-parser "3.0.2"
+    php-parser "^3.1.3"
 
-linguist-languages@^7.5.1:
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/linguist-languages/-/linguist-languages-7.9.0.tgz#025b421ff3acfdf9c9b34640816041bf842b5437"
-  integrity sha512-saKTpS7BH8vOOwzrZNTkFL/DuT2JN7cg6oHWY8nAjt89+pV1qFcpbjEEcZdAv9ogc4DcxVFHkXmjeyU/DiFHQw==
+linguist-languages@^7.21.0:
+  version "7.21.0"
+  resolved "https://registry.yarnpkg.com/linguist-languages/-/linguist-languages-7.21.0.tgz#da0184f622367cb092f1f8ba435937a85534f675"
+  integrity sha512-KrWJJbFOvlDhjlt5OhUipVlXg+plUfRurICAyij1ZVxQcqPt/zeReb9KiUVdGUwwhS/2KS9h3TbyfYLA5MDlxQ==
 
 map-age-cleaner@^0.1.3:
   version "0.1.3"
@@ -41,10 +41,10 @@ p-defer@^1.0.0:
   resolved "https://registry.yarnpkg.com/p-defer/-/p-defer-1.0.0.tgz#9f6eb182f6c9aa8cd743004a7d4f96b196b0fb0c"
   integrity sha1-n26xgvbJqozXQwBKfU+WsZaw+ww=
 
-php-parser@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/php-parser/-/php-parser-3.0.2.tgz#a86dbbc110e57378cba71ab4cd9b0d18f3872ac3"
-  integrity sha512-a7y1+odEGsceLDLpu7oNyspZ0pK8FMWJOoim4/yd82AtnEZNLdCLZ67arnOQZ9K0lHJiSp4/7lVUpGELVxE14w==
+php-parser@^3.1.3:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/php-parser/-/php-parser-3.1.4.tgz#165a594bf9d7fb516b89d1ecf62a361083a482f8"
+  integrity sha512-WUEfH4FWsVItqgOknM67msDdcUAfgPJsHhPNl6EPXzWtX+PfdY282m4i8YIJ9ALUEhf+qGDajdmW+VYqSd7Deg==
 
 prettier@^2.2.1:
   version "2.2.1"
