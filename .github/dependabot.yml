@@ -4,9 +4,16 @@
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+registries:
+  magento:
+    type: composer-repository
+    url: repo.magento.com
+    username: ${{secrets.DEPENDABOT_COMPOSER_USERNAME}}
+    password: ${{secrets.DEPENDABOT_COMPOSER_PASSWORD}}
 updates:
   - package-ecosystem: "composer"
     directory: "/" # Location of package manifests
+    registries: "*"
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
