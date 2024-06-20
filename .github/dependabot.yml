@@ -13,6 +13,7 @@ registries:
 updates:
   - package-ecosystem: "composer"
     directory: "/" # Location of package manifests
+    registries: "*"
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
