@@ -20,9 +20,9 @@ jobs:
         run: composer validate
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
         env:
-          COMPOSER_AUTH: ${{secrets.MAGENTO_MARKETPLACE_AUTH}}
+          COMPOSER_AUTH: ${{ secrets.MAGENTO_MARKETPLACE_AUTH }}
 
       - name: Run linters
         run: ./vendor/bin/phpcs -ns .
