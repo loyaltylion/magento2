@@ -51,14 +51,14 @@ class OrderUpdateObserver implements ObserverInterface
         $response = $orders->update($order->getId(), $data);
 
         if ($response->success) {
-            $this->_logger->debug('[LoyaltyLion] Updated order OK');
+            $this->_logger->debug("[LoyaltyLion] Updated order OK");
         } elseif ($response->status != 404) {
             // sometimes this will get fired before the order has been created,
             // so we'll get a 404 back - no reason to error, because this is expected
             $this->_logger->error(
-                '[LoyaltyLion] Failed to update order - status: ' .
+                "[LoyaltyLion] Failed to update order - status: " .
                     $response->status .
-                    ', error: ' .
+                    ", error: " .
                     $response->error
             );
         }

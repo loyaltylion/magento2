@@ -19,7 +19,7 @@ class Orders extends Client
      */
     public function create($data)
     {
-        $response = $this->_connection->post('/orders', $data);
+        $response = $this->_connection->post("/orders", $data);
 
         return $this->parseResponse($response);
     }
@@ -36,28 +36,28 @@ class Orders extends Client
      */
     public function update($id, $data)
     {
-        $response = $this->_connection->put('/orders/' . $id, $data);
+        $response = $this->_connection->put("/orders/" . $id, $data);
 
         return $this->parseResponse($response);
     }
 
     public function setCancelled($id)
     {
-        $response = $this->_connection->put('/orders/' . $id . '/cancelled');
+        $response = $this->_connection->put("/orders/" . $id . "/cancelled");
 
         return $this->parseResponse($response);
     }
 
     public function setPaid($id)
     {
-        $response = $this->_connection->put('/orders/' . $id . '/paid');
+        $response = $this->_connection->put("/orders/" . $id . "/paid");
 
         return $this->parseResponse($response);
     }
 
     public function setRefunded($id)
     {
-        $response = $this->_connection->put('/orders/' . $id . '/refunded');
+        $response = $this->_connection->put("/orders/" . $id . "/refunded");
 
         return $this->parseResponse($response);
     }
@@ -65,7 +65,7 @@ class Orders extends Client
     public function addPayment($id, $data)
     {
         $response = $this->_connection->post(
-            '/orders/' . $id . '/payments',
+            "/orders/" . $id . "/payments",
             $data
         );
 
@@ -75,7 +75,7 @@ class Orders extends Client
     public function addRefund($id, $data)
     {
         $response = $this->_connection->post(
-            '/orders/' . $id . '/refunds',
+            "/orders/" . $id . "/refunds",
             $data
         );
 

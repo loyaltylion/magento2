@@ -37,7 +37,7 @@ class OrderCreateObserver implements ObserverInterface
             $order->getStoreId()
         );
         if (!$orders) {
-            $this->_logger->debug('[LoyaltyLion] skip order create, disabled');
+            $this->_logger->debug("[LoyaltyLion] skip order create, disabled");
             // We aren't enabled in the website/store this order was placed in
             return;
         }
@@ -53,12 +53,12 @@ class OrderCreateObserver implements ObserverInterface
         $response = $orders->create($data);
 
         if ($response->success) {
-            $this->_logger->debug('[LoyaltyLion] Tracked order OK');
+            $this->_logger->debug("[LoyaltyLion] Tracked order OK");
         } else {
             $this->_logger->error(
-                '[LoyaltyLion] Failed to track order - status: ' .
+                "[LoyaltyLion] Failed to track order - status: " .
                     $response->status .
-                    ', error: ' .
+                    ", error: " .
                     $response->error
             );
         }

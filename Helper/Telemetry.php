@@ -6,7 +6,7 @@ class Telemetry
 {
     private $_productMetadata;
     private $_moduleList;
-    const MODULE_NAME = 'Loyaltylion_Core';
+    const MODULE_NAME = "Loyaltylion_Core";
 
     public function __construct(
         \Magento\Framework\App\ProductMetadata $productMetadata,
@@ -24,7 +24,7 @@ class Telemetry
         ] = $this->_productMetadata->getVersion();
         $version_info['$module_version'] = $this->_moduleList->getOne(
             $this::MODULE_NAME
-        )['setup_version'];
+        )["setup_version"];
         return $version_info;
     }
 }

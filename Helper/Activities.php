@@ -24,26 +24,26 @@ class Activities extends Client
     public function track($name, $data)
     {
         if (!is_array($data)) {
-            throw new \Exception('Activity data must be an array');
+            throw new \Exception("Activity data must be an array");
         }
 
-        $data['name'] = $name;
+        $data["name"] = $name;
 
-        if (empty($data['name'])) {
-            throw new \Exception('Activity name is required');
+        if (empty($data["name"])) {
+            throw new \Exception("Activity name is required");
         }
-        if (empty($data['customer_id'])) {
-            throw new \Exception('customer_id is required');
+        if (empty($data["customer_id"])) {
+            throw new \Exception("customer_id is required");
         }
-        if (empty($data['customer_email'])) {
-            throw new \Exception('customer_email is required');
-        }
-
-        if (empty($data['date'])) {
-            $data['date'] = date('c');
+        if (empty($data["customer_email"])) {
+            throw new \Exception("customer_email is required");
         }
 
-        $response = $this->_connection->post('/activities', $data);
+        if (empty($data["date"])) {
+            $data["date"] = date("c");
+        }
+
+        $response = $this->_connection->post("/activities", $data);
 
         return $this->parseResponse($response);
     }
@@ -59,7 +59,7 @@ class Activities extends Client
     public function update($name, $id, $data)
     {
         $response = $this->_connection->put(
-            '/activities/' . $name . '/' . $id,
+            "/activities/" . $name . "/" . $id,
             $data
         );
 

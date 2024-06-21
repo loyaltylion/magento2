@@ -18,33 +18,33 @@ class Connection
 
     public function post($path, $data = [])
     {
-        return $this->_request('POST', $path, $data);
+        return $this->_request("POST", $path, $data);
     }
 
     public function put($path, $data = [])
     {
-        return $this->_request('PUT', $path, $data);
+        return $this->_request("PUT", $path, $data);
     }
 
     private function _request($method, $path, $data)
     {
         $options = [
             CURLOPT_URL => $this->_base_uri . $path,
-            CURLOPT_USERAGENT => 'loyaltylion-php-client-v2.0.0',
+            CURLOPT_USERAGENT => "loyaltylion-php-client-v2.0.0",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => $this->_timeout,
-            CURLOPT_USERPWD => $this->_token . ':' . $this->_secret,
+            CURLOPT_USERPWD => $this->_token . ":" . $this->_secret,
         ];
 
         switch ($method) {
-            case 'POST':
+            case "POST":
                 $options += [
                     CURLOPT_POST => true,
                 ];
                 break;
-            case 'PUT':
+            case "PUT":
                 $options += [
-                    CURLOPT_CUSTOMREQUEST => 'PUT',
+                    CURLOPT_CUSTOMREQUEST => "PUT",
                 ];
         }
 
@@ -54,8 +54,8 @@ class Connection
             $options += [
                 CURLOPT_POSTFIELDS => $body,
                 CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($body),
+                    "Content-Type: application/json",
+                    "Content-Length: " . strlen($body),
                 ],
             ];
         }
@@ -71,14 +71,14 @@ class Connection
 
         if ($error_code !== 0) {
             $response = [
-                'status' => $headers['http_code'],
-                'error' => $error_msg,
+                "status" => $headers["http_code"],
+                "error" => $error_msg,
             ];
         } else {
             $response = [
-                'status' => $headers['http_code'],
-                'headers' => $headers,
-                'body' => $body,
+                "status" => $headers["http_code"],
+                "headers" => $headers,
+                "body" => $body,
             ];
         }
 

@@ -20,16 +20,16 @@ class LionCustomer implements
     {
         $customer = $this->_session->getCustomer();
         list(, $secret) = $this->_config->getCredentialsForContext();
-        $now = date('c');
+        $now = date("c");
         return [
-            'logged_in' => $this->_session->isLoggedIn(),
-            'date' => $now,
-            'customer' => [
-                'id' => $customer->getId(),
-                'email' => $customer->getEmail(),
-                'name' => $customer->getName(),
+            "logged_in" => $this->_session->isLoggedIn(),
+            "date" => $now,
+            "customer" => [
+                "id" => $customer->getId(),
+                "email" => $customer->getEmail(),
+                "name" => $customer->getName(),
             ],
-            'auth_token' => sha1($customer->getId() . $now . $secret),
+            "auth_token" => sha1($customer->getId() . $now . $secret),
         ];
     }
 }
