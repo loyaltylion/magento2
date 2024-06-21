@@ -2,7 +2,7 @@
   "name": "loyaltylion/core",
   "description": "LoyaltyLion - Loyalty Program",
   "type": "magento2-module",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "license": "MIT",
   "authors": [
     {
@@ -13,7 +13,10 @@
     }
   ],
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "autoload": {
     "psr-4": {
