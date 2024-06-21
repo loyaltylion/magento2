@@ -2,15 +2,16 @@
 
 namespace Loyaltylion\Core\Helper;
 
-class Connection
+class Connection extends \Magento\Framework\HTTP\Client\Curl
 {
     private $_token;
     private $_secret;
     private $_base_uri;
-    private $_timeout = 5;
+    private $_curl;
 
-    public function __construct($token, $secret, $base_uri)
+    public function __construct($curl, $token, $secret, $base_uri)
     {
+        $this->_curl = $curl;
         $this->_token = $token;
         $this->_secret = $secret;
         $this->_base_uri = $base_uri;
@@ -28,59 +29,34 @@ class Connection
 
     private function _request($method, $path, $data)
     {
-        $options = [
-            CURLOPT_URL => $this->_base_uri . $path,
-            CURLOPT_USERAGENT => "loyaltylion-php-client-v2.0.0",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => $this->_timeout,
-            CURLOPT_USERPWD => $this->_token . ":" . $this->_secret,
-        ];
+        $this->_curl->setTimeout(5);
+        $this->_curl->setCredentials($this->_token, $this->_secret);
+        $this->_curl->setOption(
+            CURLOPT_USERAGENT,
+            "loyaltylion-php-client-v2.0.1"
+        );
+        $this->_curl->addHeader("Content-Type", "application/json");
+        $uri = $this->_base_uri . $path;
 
         switch ($method) {
             case "POST":
-                $options += [
-                    CURLOPT_POST => true,
-                ];
+                $this->_curl->post($uri, json_encode($data));
                 break;
             case "PUT":
-                $options += [
-                    CURLOPT_CUSTOMREQUEST => "PUT",
-                ];
+                $this->_curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
+                $this->_curl->makeRequest("PUT", $uri);
+                break;
         }
 
-        if (!empty($data)) {
-            $body = json_encode($data);
+        $body = $this->_curl->getBody();
+        $headers = $this->_curl->getHeaders();
+        $status = $this->_curl->getStatus();
 
-            $options += [
-                CURLOPT_POSTFIELDS => $body,
-                CURLOPT_HTTPHEADER => [
-                    "Content-Type: application/json",
-                    "Content-Length: " . strlen($body),
-                ],
-            ];
-        }
-
-        // now make the request
-        $curl = curl_init();
-        curl_setopt_array($curl, $options);
-
-        $body = curl_exec($curl);
-        $headers = curl_getinfo($curl);
-        $error_code = curl_errno($curl);
-        $error_msg = curl_error($curl);
-
-        if ($error_code !== 0) {
-            $response = [
-                "status" => $headers["http_code"],
-                "error" => $error_msg,
-            ];
-        } else {
-            $response = [
-                "status" => $headers["http_code"],
-                "headers" => $headers,
-                "body" => $body,
-            ];
-        }
+        $response = [
+            "status" => $status,
+            "headers" => $headers,
+            "body" => $body,
+        ];
 
         return (object) $response;
     }
