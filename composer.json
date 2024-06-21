@@ -2,7 +2,7 @@
   "name": "loyaltylion/core",
   "description": "LoyaltyLion - Loyalty Program",
   "type": "magento2-module",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "authors": [
     {
@@ -15,7 +15,8 @@
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "magento/composer-dependency-version-audit-plugin": true
     }
   },
   "autoload": {
@@ -28,7 +29,7 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
     "friendsofphp/php-cs-fixer": "^2.16",
     "magento/framework": ">=100.1.0",
-    "magento/magento-coding-standard": "^5.0",
+    "magento/magento-coding-standard": "^33.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "phpmd/phpmd": "^2.8",
     "phpunit/phpunit": "^8.5",
