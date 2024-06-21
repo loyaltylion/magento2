@@ -2,11 +2,20 @@
 
 namespace Loyaltylion\Core\Helper;
 
+use Magento\Framework\HTTP\Client\Curl;
+
 class Client
 {
+    private $_curl;
+
+    public function __construct(\Magento\Framework\HTTP\Client\Curl $curl)
+    {
+        $this->_curl = $curl;
+    }
+
     public function getClient($base_uri, $token, $secret)
     {
-        $connection = new Connection($token, $secret, $base_uri);
+        $connection = new Connection($this->_curl, $token, $secret, $base_uri);
         $events = new Activities($connection);
         $orders = new Orders($connection);
         return [$connection, $events, $orders];
@@ -14,16 +23,6 @@ class Client
 
     protected function parseResponse($response)
     {
-        if (isset($response->error)) {
-            // this kind of error is from curl itself
-            // e.g. a request timeout, so just return that error
-            return (object) [
-                "success" => false,
-                "status" => $response->status,
-                "error" => $response->error,
-            ];
-        }
-
         $result = [
             "success" =>
                 (int) $response->status >= 200 &&
