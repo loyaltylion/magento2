@@ -38,6 +38,6 @@ class InstallData implements InstallDataInterface
         ModuleDataSetupInterface $setup,
         ModuleContextInterface $context
     ) {
-        $this->_integrationManager->processIntegrationConfig(['LoyaltyLion']);
+        $this->_integrationManager->processIntegrationConfig(["LoyaltyLion"]);
     }
 }

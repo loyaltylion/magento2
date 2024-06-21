@@ -10,11 +10,11 @@ namespace Loyaltylion\Core\Helper;
 
 class Config
 {
-    const TOKEN = 'loyaltylion_core/general/token';
-    const SECRET = 'loyaltylion_core/general/secret';
-    const LOADER_PATH = '/static/2/loader.js';
-    const SDK_HOST = 'sdk.loyaltylion.net';
-    const API_HOST = 'api.loyaltylion.com';
+    const TOKEN = "loyaltylion_core/general/token";
+    const SECRET = "loyaltylion_core/general/secret";
+    const LOADER_PATH = "/static/2/loader.js";
+    const SDK_HOST = "sdk.loyaltylion.net";
+    const API_HOST = "api.loyaltylion.com";
 
     private $_scopeConfig;
     private $_request;
@@ -79,13 +79,13 @@ class Config
 
     public function getLoaderUrl()
     {
-        $path = getenv('LOYALTYLION_LOADER_PATH') ?: self::LOADER_PATH;
+        $path = getenv("LOYALTYLION_LOADER_PATH") ?: self::LOADER_PATH;
         return $this->getSdkHost() . $path;
     }
 
     public function getSdkHost()
     {
-        return getenv('LOYALTYLION_SDK_HOST') ?: self::SDK_HOST;
+        return getenv("LOYALTYLION_SDK_HOST") ?: self::SDK_HOST;
     }
 
     public function getClientForStore($storeId)
@@ -99,11 +99,11 @@ class Config
 
     private function _getApiHost()
     {
-        return getenv('LOYALTYLION_API_HOST') ?: self::API_HOST;
+        return getenv("LOYALTYLION_API_HOST") ?: self::API_HOST;
     }
 
     private function _getApiBaseUrl()
     {
-        return 'https://' . $this->_getApiHost() . '/v2';
+        return "https://" . $this->_getApiHost() . "/v2";
     }
 }

@@ -27,18 +27,18 @@ class Tracking
     public function getTrackingData()
     {
         $data = [
-            'ip_address' => $this->_remoteAddress->getRemoteAddress(),
-            'user_agent' => $this->_httpHeader->getHttpUserAgent(),
+            "ip_address" => $this->_remoteAddress->getRemoteAddress(),
+            "user_agent" => $this->_httpHeader->getHttpUserAgent(),
         ];
 
         $referralId = $this->_getLoyaltyLionReferralId();
         if ($referralId) {
-            $data['referral_id'] = $referralId;
+            $data["referral_id"] = $referralId;
         }
 
         $tracking_id = $this->_getTrackingIdFromSession();
         if ($tracking_id) {
-            $data['tracking_id'] = $tracking_id;
+            $data["tracking_id"] = $tracking_id;
         }
 
         return $data;
@@ -55,7 +55,7 @@ class Tracking
             return null;
         }
 
-        $values = explode(':::', $this->_session->getLoyaltyLionTrackingId());
+        $values = explode(":::", $this->_session->getLoyaltyLionTrackingId());
 
         if (empty($values)) {
             return null;

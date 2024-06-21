@@ -40,19 +40,19 @@ class RegisterObserver implements ObserverInterface
 
             if ($response->success) {
                 $this->_logger->debug(
-                    '[LoyaltyLion] Tracked event [signup] OK'
+                    "[LoyaltyLion] Tracked event [signup] OK"
                 );
             } else {
                 $this->_logger->debug(
-                    '[LoyaltyLion] Failed to track event - status: ' .
+                    "[LoyaltyLion] Failed to track event - status: " .
                         $response->status .
-                        ', error: ' .
+                        ", error: " .
                         $response->error
                 );
             }
         } catch (\Exception $e) {
             $this->_logger->error(
-                '[LoyaltyLion] Unexpected error: ' . $e->getMessage()
+                "[LoyaltyLion] Unexpected error: " . $e->getMessage()
             );
         }
     }
@@ -60,9 +60,9 @@ class RegisterObserver implements ObserverInterface
     private function _buildPayload($customer)
     {
         $data = [
-            'customer_id' => $customer->getId(),
-            'customer_email' => $customer->getEmail(),
-            'date' => date('c'),
+            "customer_id" => $customer->getId(),
+            "customer_email" => $customer->getEmail(),
+            "date" => date("c"),
         ];
 
         return array_merge($data, $this->_tracking->getTrackingData());
