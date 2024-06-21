@@ -16,4 +16,6 @@
    <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
  </rule>
  <exclude-pattern>vendor/*</exclude-pattern>
+ <exclude-pattern>node_modules/*</exclude-pattern>
+ <exclude-pattern>Setup/*</exclude-pattern>
 </ruleset>
