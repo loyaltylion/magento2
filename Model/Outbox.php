@@ -18,6 +18,8 @@ class Outbox
     const KIND_SIGNUP = "signup";
     const KIND_ORDER_CREATE = "order_create";
     const KIND_ORDER_UPDATE = "order_update";
+    const KIND_CUSTOMER_EMAIL = "customer_email";
+    const KIND_CUSTOMER_DELETE = "customer_delete";
 
     const STATUS_PENDING = "pending";
     const STATUS_SENT = "sent";
@@ -77,7 +79,7 @@ class Outbox
             "store_id" => (int) $storeId,
             "kind" => $kind,
             "subject" => $subject,
-            "priority" => $kind === self::KIND_ORDER_UPDATE ? 1 : 0,
+            "priority" => in_array($kind, [self::KIND_SIGNUP, self::KIND_ORDER_CREATE]) ? 0 : 1,
             "payload" => $payload === null ? null : json_encode($payload),
             "status" => self::STATUS_PENDING,
             "next_attempt_at" => $this->_datetime($now + $delaySeconds),
@@ -99,8 +101,9 @@ class Outbox
     }
 
     /**
-     * Pending events in the order they must be sent: creates and sign-ups
-     * before updates, then oldest first.
+     * Pending events in the order they must be sent: order creates and
+     * sign-ups before other events about the same order or customer, then
+     * oldest first.
      *
      * @param int[]|null $ids only these events, whether or not they are due yet
      */

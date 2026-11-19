@@ -13,4 +13,12 @@
         <observer name="checkout_submit_all_after_loyaltylion_observer"
                   instance="Loyaltylion\Core\Model\Observer\OrderUpdateObserver"/>
     </event>
+    <event name="customer_email_changed">
+        <observer name="customer_email_changed_loyaltylion_observer"
+                  instance="Loyaltylion\Core\Model\Observer\CustomerEmailChangedObserver"/>
+    </event>
+    <event name="customer_delete_after">
+        <observer name="customer_delete_after_loyaltylion_observer"
+                  instance="Loyaltylion\Core\Model\Observer\CustomerDeleteObserver"/>
+    </event>
 </config>

@@ -206,8 +206,19 @@ class EventQueue
                     $this->_orderTools->getRefundStatus($order)
                 );
                 return ["PUT", "/orders/" . $orderId, json_encode($data)];
+
+            case Outbox::KIND_CUSTOMER_EMAIL:
+                return ["PUT", "/magento/customers/" . $this->_customerId($row) . "/email", $row["payload"]];
+
+            case Outbox::KIND_CUSTOMER_DELETE:
+                return ["DELETE", "/magento/customers/" . $this->_customerId($row), ""];
         }
 
         throw new \Exception("Unknown event kind " . $row["kind"]);
+    }
+
+    private function _customerId(array $row)
+    {
+        return rawurlencode(substr($row["subject"], strlen("customer:")));
     }
 }
