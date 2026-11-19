@@ -31,10 +31,13 @@ class Connection extends \Magento\Framework\HTTP\Client\Curl
     {
         $this->_curl->setTimeout(5);
         $this->_curl->setCredentials($this->_token, $this->_secret);
-        $this->_curl->setOption(
-            CURLOPT_USERAGENT,
-            "loyaltylion-php-client-v2.0.1"
-        );
+        // The client is shared and keeps every option it is given, so start
+        // each request from a clean set. Otherwise the body of a PUT is sent
+        // again as the body of the next POST in the same process, which is
+        // how an order's create request lost its discount codes.
+        $this->_curl->setOptions([
+            CURLOPT_USERAGENT => "loyaltylion-php-client-v2.0.1",
+        ]);
         $this->_curl->addHeader("Content-Type", "application/json");
         $uri = $this->_base_uri . $path;
 
