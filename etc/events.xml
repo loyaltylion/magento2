@@ -21,4 +21,8 @@
         <observer name="customer_delete_after_loyaltylion_observer"
                   instance="Loyaltylion\Core\Model\Observer\CustomerDeleteObserver"/>
     </event>
+    <event name="newsletter_subscriber_save_after">
+        <observer name="newsletter_subscriber_save_after_loyaltylion_observer"
+                  instance="Loyaltylion\Core\Model\Observer\NewsletterSubscribeObserver"/>
+    </event>
 </config>

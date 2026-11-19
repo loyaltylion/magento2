@@ -212,6 +212,9 @@ class EventQueue
 
             case Outbox::KIND_CUSTOMER_DELETE:
                 return ["DELETE", "/magento/customers/" . $this->_customerId($row), ""];
+
+            case Outbox::KIND_NEWSLETTER_SIGNUP:
+                return ["POST", "/magento/customers/" . $this->_customerId($row) . "/newsletter_signup", ""];
         }
 
         throw new \Exception("Unknown event kind " . $row["kind"]);

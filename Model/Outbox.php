@@ -20,6 +20,7 @@ class Outbox
     const KIND_ORDER_UPDATE = "order_update";
     const KIND_CUSTOMER_EMAIL = "customer_email";
     const KIND_CUSTOMER_DELETE = "customer_delete";
+    const KIND_NEWSLETTER_SIGNUP = "newsletter_signup";
 
     const STATUS_PENDING = "pending";
     const STATUS_SENT = "sent";
