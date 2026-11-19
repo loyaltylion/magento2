@@ -14,6 +14,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="loyaltylion_guest_cart_id" type="Loyaltylion\Core\Plugin\CustomerData\GuestCartId"/>
+    </type>
     <type name="Magento\Framework\App\RouterList">
         <arguments>
             <argument name="routerList" xsi:type="array">
