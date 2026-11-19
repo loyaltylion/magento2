@@ -17,6 +17,8 @@
                 <product_points>0</product_points>
                 <cart_points>0</cart_points>
                 <minicart_points>0</minicart_points>
+                <post_purchase>0</post_purchase>
+                <store_language>0</store_language>
             </storefront>
         </loyaltylion_core>
     </default>

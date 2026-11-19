@@ -83,6 +83,16 @@
                     <label>Show points in the mini cart</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="post_purchase" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show post-purchase prompts on the order success page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="store_language" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show LoyaltyLion in each store view's language</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

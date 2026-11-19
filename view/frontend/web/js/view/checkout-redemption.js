@@ -18,6 +18,11 @@ define(["uiComponent", "Magento_Checkout/js/model/quote"], function (
     initialize: function () {
       this._super();
 
+      var stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = require.toUrl("Loyaltylion_Core/css/checkout-redemption.css");
+      document.head.appendChild(stylesheet);
+
       quote.totals.subscribe(function () {
         window.dispatchEvent(new CustomEvent("loyaltylion:cart-totals-changed"));
       });
