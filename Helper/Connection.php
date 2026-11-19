@@ -27,6 +27,25 @@ class Connection extends \Magento\Framework\HTTP\Client\Curl
         return $this->_request("PUT", $path, $data);
     }
 
+    /**
+     * Throws when no response comes back (network error, timeout).
+     */
+    public function getJson($path, $timeout)
+    {
+        $this->_curl->setTimeout($timeout);
+        $this->_curl->setCredentials($this->_token, $this->_secret);
+        $this->_curl->setOptions([
+            CURLOPT_USERAGENT => "loyaltylion-php-client-v2.0.1",
+        ]);
+        $this->_curl->get($this->_base_uri . $path);
+
+        return (object) [
+            "status" => $this->_curl->getStatus(),
+            "headers" => $this->_curl->getHeaders(),
+            "body" => $this->_curl->getBody(),
+        ];
+    }
+
     private function _request($method, $path, $data)
     {
         return $this->sendJson($method, $path, json_encode($data), 5);

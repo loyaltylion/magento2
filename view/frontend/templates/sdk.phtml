@@ -3,6 +3,9 @@ if ($block->isEnabled($token, $secret)): ?>
     <?php /* Rendered through Magento so that pages with a strict Content Security Policy, such as the checkout, run it. */ ?>
     <?php ob_start(); ?>
 !function(n,o){function t(o){var t=n.getElementsByTagName("script")[0],i=n.createElement("script");i.src=o,i.crossOrigin="",t.parentNode.insertBefore(i,t)}if(!o.isLoyaltyLion){window.loyaltylion=o,void 0===window.lion&&(window.lion=o),o.version=2,o.isLoyaltyLion=!0;var i=new Date;t("https://<?= $escaper->escapeJs($block->getLoaderUrl()); ?>?t="+i.getFullYear()+i.getMonth()+i.getDate());var e=!1;o.init=function(n){if(e)throw new Error("Cannot call lion.init more than once");e=!0;var i=o._token=n.token;if(!i)throw new Error("Token must be supplied to lion.init");for(var r=[],a="_push configure bootstrap shutdown on removeListener".split(" "),l=0;l<a.length;l+=1)!function(n,o){n[o]=function(){r.push([o,Array.prototype.slice.call(arguments,0)])}}(o,a[l]);t("https://<?= $escaper->escapeJs($block->getSdkHost()); ?>/sdk/start/"+i+".js"),o._initData=n,o._buffer=r}}}(document,window.loyaltylion||[]);
+<?php if ($block->getFreeProductCartUrl()): ?>
+window.loyaltylionMagento = { freeProductCartUrl: "<?= $escaper->escapeJs($block->getFreeProductCartUrl()); ?>" };
+<?php endif; ?>
 lion.init({ token: "<?= $escaper->escapeJs($token); ?>" });
     <?php $loader = ob_get_clean(); ?>
     <?= /* @noEscape */ $secureRenderer->renderTag(

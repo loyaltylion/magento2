@@ -25,4 +25,16 @@
         <observer name="newsletter_subscriber_save_after_loyaltylion_observer"
                   instance="Loyaltylion\Core\Model\Observer\NewsletterSubscribeObserver"/>
     </event>
+    <event name="sales_quote_collect_totals_before">
+        <observer name="sales_quote_collect_totals_before_loyaltylion_free_product"
+                  instance="Loyaltylion\Core\Model\Observer\FreeProductQuoteObserver"/>
+    </event>
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="sales_model_service_quote_submit_before_loyaltylion_free_product"
+                  instance="Loyaltylion\Core\Model\Observer\FreeProductOrderObserver"/>
+    </event>
+    <event name="sales_model_service_quote_submit_success">
+        <observer name="sales_model_service_quote_submit_success_loyaltylion_free_product"
+                  instance="Loyaltylion\Core\Model\Observer\FreeProductPlacedObserver"/>
+    </event>
 </config>

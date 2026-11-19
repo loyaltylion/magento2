@@ -83,6 +83,12 @@
                     <label>Show points in the mini cart</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="free_product_cart" translate="label comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Add claimed free products to the cart</label>
+                    <comment>A shopper who claims a free product reward gets it in their cart at no charge, without using a discount code.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

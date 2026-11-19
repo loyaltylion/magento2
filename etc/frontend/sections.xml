@@ -14,4 +14,7 @@
     <action name="customer/ajax/login">
         <section name="lion-customer"/>
     </action>
+    <action name="loyaltylion/reward/add">
+        <section name="cart"/>
+    </action>
 </config>

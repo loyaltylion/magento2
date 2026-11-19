@@ -7,15 +7,18 @@ class OrderTools
     private $_telemetry;
     private $_httpHeader;
     private $_tracking;
+    private $_freeProduct;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Telemetry $telemetry,
         \Magento\Framework\HTTP\Header $httpHeader,
-        \Loyaltylion\Core\Helper\Tracking $tracking
+        \Loyaltylion\Core\Helper\Tracking $tracking,
+        \Loyaltylion\Core\Model\Reward\FreeProduct $freeProduct
     ) {
         $this->_telemetry = $telemetry;
         $this->_httpHeader = $httpHeader;
         $this->_tracking = $tracking;
+        $this->_freeProduct = $freeProduct;
     }
 
     public function getPaymentStatus($order)
@@ -85,16 +88,32 @@ class OrderTools
 
     public function getDiscountCodes($order)
     {
+        $coupon = null;
         $code = $order->getCouponCode();
         if ($code) {
-            return [
-                "discount_codes" => [
-                    "code" => $code,
-                    "amount" => abs($order->getDiscountAmount()),
-                ],
+            $coupon = [
+                "code" => $code,
+                "amount" => abs($order->getDiscountAmount()),
             ];
         }
-        return ["discount_codes" => []];
+
+        // A free product line took no money off the order, so its claim's
+        // code is reported with no amount. Reporting it is what marks the
+        // claim as used.
+        $rewards = [];
+        foreach ($this->_freeProduct->codesOnOrder($order) as $rewardCode) {
+            $rewards[] = ["code" => $rewardCode, "amount" => 0];
+        }
+
+        if (!$rewards) {
+            return ["discount_codes" => $coupon ?: []];
+        }
+
+        return [
+            "discount_codes" => $coupon
+                ? array_merge([$coupon], $rewards)
+                : $rewards,
+        ];
     }
 
     public function getBaseOrderData($order)
