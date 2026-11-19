@@ -7,6 +7,16 @@
             <label>LoyaltyLion</label>
             <tab>customer</tab>
             <resource>Loyaltylion_Core::loyaltylion_core</resource>
+            <group id="checkout_redemption" translate="label" type="text" sortOrder="30" showInDefault="1"
+                   showInWebsite="1" showInStore="0">
+                <label>Redeem points at checkout</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show redeem points on the cart page and in the checkout</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Needs the Redeem at checkout reward in LoyaltyLion. Shown to signed-in members only.</comment>
+                </field>
+            </group>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
                    showInStore="0">
                 <label>General</label>
