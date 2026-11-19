@@ -7,5 +7,13 @@
                    template="Loyaltylion_Core::checkout-redemption/cart.phtml" before="checkout.cart.methods.bottom"
                    ifconfig="loyaltylion_core/checkout_redemption/enabled"/>
         </referenceContainer>
+        <referenceContainer name="cart.summary">
+            <block class="Loyaltylion\Core\Block\CartPoints" name="loyaltylion.cart.points"
+                   template="Loyaltylion_Core::storefront/cart-points.phtml" after="checkout.cart.totals.container"
+                   ifconfig="loyaltylion_core/storefront/cart_points">
+                <block class="Magento\Framework\View\Element\Template" name="loyaltylion.cart.points.style"
+                       template="Loyaltylion_Core::storefront/points-style.phtml"/>
+            </block>
+        </referenceContainer>
     </body>
 </page>

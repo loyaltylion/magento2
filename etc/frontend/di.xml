@@ -28,4 +28,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\Block\Cart\Sidebar">
+        <plugin name="loyaltylion_minicart_points" type="Loyaltylion\Core\Plugin\MinicartPoints"/>
+    </type>
 </config>

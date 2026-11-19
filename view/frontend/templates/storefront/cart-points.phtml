@@ -1,0 +1,14 @@
+<?php
+/** @var \Loyaltylion\Core\Block\CartPoints $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$amount = $block->getSubtotalInMinorUnits();
+if ($amount <= 0) {
+    return;
+}
+$points = '<strong><span data-lion-points-for="' . $escaper->escapeHtmlAttr($amount) . '"></span> '
+    . $escaper->escapeHtml(__('points')) . '</strong>';
+?>
+<?= $block->getChildHtml() ?>
+<div class="loyaltylion-points loyaltylion-cart-points">
+    <?= str_replace('%1', $points, $escaper->escapeHtml(__('This order earns %1'))) ?>
+</div>

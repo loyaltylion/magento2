@@ -1,0 +1,19 @@
+<?php
+/** @var \Loyaltylion\Core\Block\ProductPoints $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$product = $block->getProduct();
+if (!$product) {
+    return;
+}
+$id = $escaper->escapeHtmlAttr($product->getId());
+$points = '<strong><span data-lion-points-for-product-id="' . $id . '"></span> '
+    . $escaper->escapeHtml(__('points')) . '</strong>';
+?>
+<?= $block->getChildHtml() ?>
+<div class="loyaltylion-points loyaltylion-product-points">
+    <span hidden data-lion-price-for-product-id="<?= $id ?>"><?= $escaper->escapeHtml($block->getDisplayPrice($product)) ?></span>
+    <?= str_replace('%1', $points, $escaper->escapeHtml(__('Earn %1 on this purchase'))) ?>
+</div>
+<script type="text/x-magento-init">
+{"*": {"Loyaltylion_Core/js/product-points": {"productId": "<?= $id ?>"}}}
+</script>

@@ -16,6 +16,7 @@ class Storefront
     const LOYALTY_PAGE_ELEMENT = "loyaltylion_core/storefront/loyalty_page_element";
     const MENU_LINK = "loyaltylion_core/storefront/menu_link";
     const ACCOUNT_PAGE = "loyaltylion_core/storefront/account_page";
+    const MINICART_POINTS = "loyaltylion_core/storefront/minicart_points";
     const POST_PURCHASE = "loyaltylion_core/storefront/post_purchase";
     const STORE_LANGUAGE = "loyaltylion_core/storefront/store_language";
 
