@@ -29,7 +29,16 @@ class Connection extends \Magento\Framework\HTTP\Client\Curl
 
     private function _request($method, $path, $data)
     {
-        $this->_curl->setTimeout(5);
+        return $this->sendJson($method, $path, json_encode($data), 5);
+    }
+
+    /**
+     * Sends a body that is already JSON. Throws when no response comes back
+     * (network error, timeout).
+     */
+    public function sendJson($method, $path, $json, $timeout)
+    {
+        $this->_curl->setTimeout($timeout);
         $this->_curl->setCredentials($this->_token, $this->_secret);
         // The client is shared and keeps every option it is given, so start
         // each request from a clean set. Otherwise the body of a PUT is sent
@@ -43,11 +52,11 @@ class Connection extends \Magento\Framework\HTTP\Client\Curl
 
         switch ($method) {
             case "POST":
-                $this->_curl->post($uri, json_encode($data));
+                $this->_curl->post($uri, $json);
                 break;
-            case "PUT":
-                $this->_curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
-                $this->_curl->makeRequest("PUT", $uri);
+            default:
+                $this->_curl->setOption(CURLOPT_POSTFIELDS, $json);
+                $this->_curl->makeRequest($method, $uri);
                 break;
         }
 

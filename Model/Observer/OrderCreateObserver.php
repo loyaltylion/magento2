@@ -10,15 +10,18 @@ class OrderCreateObserver implements ObserverInterface
     private $_config;
     private $_orderTools;
     private $_logger;
+    private $_queue;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Config $config,
         \Loyaltylion\Core\Helper\OrderTools $orderTools,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Loyaltylion\Core\Model\EventQueue $queue
     ) {
         $this->_config = $config;
         $this->_orderTools = $orderTools;
         $this->_logger = $logger;
+        $this->_queue = $queue;
     }
 
     public function execute(Observer $observer)
@@ -53,18 +56,16 @@ class OrderCreateObserver implements ObserverInterface
                 $this->_orderTools->getDiscountCodes($order)
             );
 
-            $response = $orders->create($data);
+            // Sent later, so the order keeps the date it was placed on.
+            $data["date"] = gmdate("c", strtotime($order->getCreatedAt() . " UTC"));
 
-            if ($response->success) {
-                $this->_logger->debug("[LoyaltyLion] Tracked order OK");
-            } else {
-                $this->_logger->error(
-                    "[LoyaltyLion] Failed to track order - status: " .
-                        $response->status .
-                        ", error: " .
-                        $response->error
-                );
-            }
+            // Built now: the shopper's tracking and referral ids live in their session.
+            $this->_queue->add(
+                $order->getStoreId(),
+                \Loyaltylion\Core\Model\Outbox::KIND_ORDER_CREATE,
+                "order:" . $order->getId(),
+                $data
+            );
         } catch (\Exception $e) {
             $this->_logger->error(
                 "[LoyaltyLion] Unexpected error: " . $e->getMessage()

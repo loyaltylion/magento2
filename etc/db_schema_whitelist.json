@@ -1,0 +1,28 @@
+{
+    "loyaltylion_outbox": {
+        "column": {
+            "id": true,
+            "store_id": true,
+            "kind": true,
+            "subject": true,
+            "priority": true,
+            "payload": true,
+            "status": true,
+            "version": true,
+            "attempts": true,
+            "next_attempt_at": true,
+            "claimed_until": true,
+            "last_status": true,
+            "last_error": true,
+            "created_at": true,
+            "sent_at": true
+        },
+        "index": {
+            "LOYALTYLION_OUTBOX_STATUS_NEXT_ATTEMPT_AT": true,
+            "LOYALTYLION_OUTBOX_SUBJECT_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="loyaltylion_outbox" resource="default" engine="innodb"
+           comment="Events waiting to be sent to LoyaltyLion">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="kind" length="32" nullable="false"/>
+        <column xsi:type="varchar" name="subject" length="64" nullable="false"
+                comment="The order or customer the event is about; events for one subject are sent in order"/>
+        <column xsi:type="smallint" name="priority" unsigned="true" nullable="false" default="1"/>
+        <column xsi:type="mediumtext" name="payload" nullable="true"
+                comment="Request body as JSON; null when it is built at send time"/>
+        <column xsi:type="varchar" name="status" length="16" nullable="false" default="pending"/>
+        <column xsi:type="int" name="version" unsigned="true" nullable="false" default="0"/>
+        <column xsi:type="int" name="attempts" unsigned="true" nullable="false" default="0"/>
+        <column xsi:type="datetime" name="next_attempt_at" nullable="false"/>
+        <column xsi:type="datetime" name="claimed_until" nullable="true"/>
+        <column xsi:type="smallint" name="last_status" unsigned="true" nullable="true"/>
+        <column xsi:type="text" name="last_error" nullable="true"/>
+        <column xsi:type="datetime" name="created_at" nullable="false"/>
+        <column xsi:type="datetime" name="sent_at" nullable="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="LOYALTYLION_OUTBOX_STATUS_NEXT_ATTEMPT_AT" indexType="btree">
+            <column name="status"/>
+            <column name="next_attempt_at"/>
+        </index>
+        <index referenceId="LOYALTYLION_OUTBOX_SUBJECT_STATUS" indexType="btree">
+            <column name="subject"/>
+            <column name="status"/>
+        </index>
+    </table>
+</schema>

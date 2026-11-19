@@ -8,17 +8,17 @@ use Magento\Framework\Event\ObserverInterface;
 class OrderUpdateObserver implements ObserverInterface
 {
     private $_config;
-    private $_orderTools;
     private $_logger;
+    private $_queue;
 
     public function __construct(
         \Loyaltylion\Core\Helper\Config $config,
-        \Loyaltylion\Core\Helper\OrderTools $orderTools,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Loyaltylion\Core\Model\EventQueue $queue
     ) {
         $this->_config = $config;
-        $this->_orderTools = $orderTools;
         $this->_logger = $logger;
+        $this->_queue = $queue;
     }
 
     public function execute(Observer $observer)
@@ -41,28 +41,19 @@ class OrderUpdateObserver implements ObserverInterface
                 return;
             }
 
-            $data = array_merge(
-                $this->_orderTools->getOrderClientData($order),
-                $this->_orderTools->getPaymentStatus($order),
-                $this->_orderTools->getCancellationStatus($order),
-                $this->_orderTools->getOrderMetadata($order),
-                $this->_orderTools->getRefundStatus($order)
-            );
-
-            $response = $orders->update($order->getId(), $data);
-
-            if ($response->success) {
-                $this->_logger->debug("[LoyaltyLion] Updated order OK");
-            } elseif ($response->status != 404) {
-                // sometimes this will get fired before the order has been created,
-                // so we'll get a 404 back - no reason to error, because this is expected
-                $this->_logger->error(
-                    "[LoyaltyLion] Failed to update order - status: " .
-                        $response->status .
-                        ", error: " .
-                        $response->error
-                );
+            if (!$order->getId()) {
+                return;
             }
+
+            // The body is built when the update is sent, from the order as it
+            // is then, so several saves collapse into one up-to-date update.
+            $this->_queue->add(
+                $order->getStoreId(),
+                \Loyaltylion\Core\Model\Outbox::KIND_ORDER_UPDATE,
+                "order:" . $order->getId(),
+                null,
+                \Loyaltylion\Core\Model\Outbox::ORDER_UPDATE_DELAY_SECONDS
+            );
         } catch (\Exception $e) {
             $this->_logger->error(
                 "[LoyaltyLion] Unexpected error: " . $e->getMessage()

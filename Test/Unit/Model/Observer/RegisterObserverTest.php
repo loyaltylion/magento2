@@ -7,6 +7,13 @@ use Loyaltylion\Core\Model\Observer\RegisterObserver;
 class RegisterObserverTest extends \PHPUnit\Framework\TestCase
 {
     protected $observer;
+    protected $events;
+    protected $successResponse;
+    protected $config;
+    protected $logger;
+    protected $tracking;
+    protected $queue;
+    protected $observerMock;
 
     public function setUp(): void
     {
@@ -19,7 +26,7 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
         $this->successResponse = (object) ["success" => true];
 
         $this->config = $this->getMockBuilder("Loyaltylion\Core\Helper\Config")
-            ->setMethods(["getClientForStore"])
+            ->onlyMethods(["getClientForStore"])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -38,22 +45,19 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->observerMock = $this->createMock(
-            "\Magento\Framework\Event\Observer",
-            [],
-            [],
-            "",
-            false
+            "\Magento\Framework\Event\Observer"
         );
 
         $event = $this->getMockBuilder(\Magento\Framework\Event::class)
-            ->setMethods(["getCustomer"])
+            ->addMethods(["getCustomer"])
             ->disableOriginalConstructor()
             ->getMock();
 
         $customer = $this->getMockBuilder(
             "\Magento\Framework\Model\AbstractModel"
         )
-            ->setMethods(["getStoreId", "getId", "getEmail"])
+            ->onlyMethods(["getId"])
+            ->addMethods(["getStoreId", "getEmail"])
             ->disableOriginalConstructor()
             ->getMock();
         $customer->method("getStoreId")->willReturn(1);
@@ -66,10 +70,17 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
             ->willReturn($event);
         $event->method("getCustomer")->willReturn($customer);
 
+        $this->queue = $this->getMockBuilder(
+            "Loyaltylion\Core\Model\EventQueue"
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->observer = new RegisterObserver(
             $this->config,
             $this->logger,
-            $this->tracking
+            $this->tracking,
+            $this->queue
         );
     }
 
@@ -84,24 +95,24 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
         $this->observer->execute($this->observerMock);
     }
 
-    public function testSubmitsSignupWhenEnabled()
+    public function testQueuesSignupWhenEnabled()
     {
         $this->config
             ->expects($this->once())
             ->method("getClientForStore")
             ->willReturn([null, $this->events, null]);
 
-        $this->events
+        $this->queue
             ->expects($this->once())
-            ->method("track")
-            ->with('$signup', [
+            ->method("add")
+            ->with(1, "signup", "customer:12345", [
+                "name" => '$signup',
                 "customer_id" => 12345,
                 "customer_email" => "person@example.com",
                 "ip_address" => "127.0.0.1",
                 "user_agent" => "Some-Browser",
                 "date" => date("c"),
-            ])
-            ->willReturn($this->successResponse);
+            ]);
 
         $this->observer->execute($this->observerMock);
     }
@@ -113,7 +124,7 @@ class RegisterObserverTest extends \PHPUnit\Framework\TestCase
             ->method("getClientForStore")
             ->willReturn([null, null, null]);
 
-        $this->events->expects($this->never())->method("track");
+        $this->queue->expects($this->never())->method("add");
 
         $this->observer->execute($this->observerMock);
     }
