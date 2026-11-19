@@ -17,6 +17,8 @@ class EventQueue
 {
     const BATCH_SIZE = 500;
     const TIMEOUT_SECONDS = 10;
+    // While the shopper still waits for the response, as 1.4.0's calls did.
+    const IN_REQUEST_TIMEOUT_SECONDS = 5;
     const KEEP_SENT_SECONDS = 7 * 86400;
 
     private $_outbox;
@@ -25,6 +27,7 @@ class EventQueue
     private $_orderTools;
     private $_logger;
     private $_flushScheduled = false;
+    private $_timeout = self::TIMEOUT_SECONDS;
 
     public function __construct(
         Outbox $outbox,
@@ -60,6 +63,8 @@ class EventQueue
                 fastcgi_finish_request();
             } elseif (function_exists("litespeed_finish_request")) {
                 litespeed_finish_request();
+            } else {
+                $this->_timeout = self::IN_REQUEST_TIMEOUT_SECONDS;
             }
             $this->sendNow($this->_outbox->takeAddedIds());
         } catch (\Throwable $e) {
@@ -147,7 +152,7 @@ class EventQueue
         $status = null;
         $body = "";
         try {
-            $response = $connection->sendJson($method, $path, $json, self::TIMEOUT_SECONDS);
+            $response = $connection->sendJson($method, $path, $json, $this->_timeout);
             $status = (int) $response->status;
             $body = (string) $response->body;
         } catch (\Throwable $e) {
