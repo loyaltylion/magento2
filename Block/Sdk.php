@@ -19,14 +19,19 @@ class Sdk extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Where the SDK posts a claimed free product's code to have the product
-     * added to the cart, or null when the merchant hasn't turned that on
+     * What the storefront script needs to put a claimed free product in the
+     * cart, as JSON, or null when the merchant hasn't turned that on
      */
-    public function getFreeProductCartUrl()
+    public function getFreeProductCartConfig()
     {
-        return $this->_freeProduct->isOn()
-            ? $this->getUrl("loyaltylion/reward/add")
-            : null;
+        if (!$this->_freeProduct->isOn()) {
+            return null;
+        }
+
+        return json_encode([
+            "url" => $this->getUrl("loyaltylion/reward/add"),
+            "message" => (string) __("Your reward is in your cart."),
+        ]);
     }
 
     public function isEnabled($token, $secret)
