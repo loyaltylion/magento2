@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="loyaltylion_element" class="Loyaltylion\Core\Block\Widget\Element">
+        <label translate="true">LoyaltyLion element</label>
+        <description translate="true">Shows a LoyaltyLion element, such as the loyalty page</description>
+        <parameters>
+            <parameter name="element" xsi:type="select" required="true" visible="true"
+                       source_model="Loyaltylion\Core\Model\Config\Source\Element">
+                <label translate="true">Element</label>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

@@ -1,0 +1,6 @@
+<?php
+/** @var \Loyaltylion\Core\Block\LoyaltyPage $block */
+/** @var \Magento\Framework\Escaper $escaper */
+[$attribute, $value] = $block->getElement();
+?>
+<div class="loyaltylion-page" <?= $escaper->escapeHtmlAttr($attribute) ?>="<?= $escaper->escapeHtmlAttr($value) ?>"></div>

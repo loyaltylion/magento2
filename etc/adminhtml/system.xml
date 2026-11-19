@@ -19,6 +19,46 @@
                     <label>Secret</label>
                 </field>
             </group>
+            <group id="storefront" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
+                   showInStore="0">
+                <label>Storefront</label>
+                <field id="loyalty_page" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show the loyalty page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>A store page holding the loyalty program, at the URL key below.</comment>
+                </field>
+                <field id="loyalty_page_url_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Loyalty page URL key</label>
+                    <comment>The page's address after your store URL, such as loyalty.</comment>
+                    <depends>
+                        <field id="loyalty_page">1</field>
+                    </depends>
+                </field>
+                <field id="loyalty_page_element" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Loyalty page layout</label>
+                    <source_model>Loyaltylion\Core\Model\Config\Source\PageElement</source_model>
+                    <comment>Loyalty panel is for programs on the classic panel.</comment>
+                    <depends>
+                        <field id="loyalty_page">1</field>
+                    </depends>
+                </field>
+                <field id="menu_link" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show the loyalty page link in the menu</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="loyalty_page">1</field>
+                    </depends>
+                </field>
+                <field id="account_page" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Show Rewards in the customer account</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>

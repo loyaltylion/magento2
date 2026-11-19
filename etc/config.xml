@@ -7,5 +7,14 @@
                 <enabled>1</enabled>
             </settings>
         </loyaltylion>
+        <loyaltylion_core>
+            <storefront>
+                <loyalty_page>0</loyalty_page>
+                <loyalty_page_url_key>loyalty</loyalty_page_url_key>
+                <loyalty_page_element>integrated-page</loyalty_page_element>
+                <menu_link>0</menu_link>
+                <account_page>0</account_page>
+            </storefront>
+        </loyaltylion_core>
     </default>
 </config>
