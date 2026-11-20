@@ -81,6 +81,18 @@
                     <comment>Adds a Rewards page to the account menu of signed-in shoppers.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="product_points" translate="label comment" type="select" sortOrder="60"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Show points on product pages</label>
+                    <comment>Tells shoppers how many points buying the product earns, under its price.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cart_points" translate="label comment" type="select" sortOrder="70"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Show points in the cart</label>
+                    <comment>Tells shoppers how many points their order earns, in the cart and the mini cart.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

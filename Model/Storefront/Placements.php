@@ -18,6 +18,8 @@ class Placements
     public const LOYALTY_PAGE = 'loyalty_page';
     public const MENU_LINK = 'menu_link';
     public const ACCOUNT_PAGE = 'account_page';
+    public const PRODUCT_POINTS = 'product_points';
+    public const CART_POINTS = 'cart_points';
 
     private const PREFIX = 'loyaltylion/storefront/';
     private const DEFAULT_URL_KEY = 'loyalty';
