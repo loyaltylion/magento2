@@ -24,12 +24,20 @@ class Client
     ) {
     }
 
-    public function send(Connection $connection, string $method, string $path, ?array $body = null): Response
-    {
+    /**
+     * @param int $timeout seconds; keep it short for a call a shopper is waiting on
+     */
+    public function send(
+        Connection $connection,
+        string $method,
+        string $path,
+        ?array $body = null,
+        int $timeout = self::TIMEOUT_SECONDS
+    ): Response {
         $options = [
             'http_errors' => false,
-            'timeout' => self::TIMEOUT_SECONDS,
-            'connect_timeout' => self::TIMEOUT_SECONDS,
+            'timeout' => $timeout,
+            'connect_timeout' => $timeout,
             'headers' => [
                 'Authorization' => 'Bearer ' . $connection->apiKey,
                 'Accept' => 'application/json',

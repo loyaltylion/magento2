@@ -15,7 +15,8 @@ class Connection
         public readonly ?string $apiKey,
         public readonly ?string $sdkToken,
         public readonly string $apiHost,
-        public readonly string $sdkHost
+        public readonly string $sdkHost,
+        public readonly bool $addsFreeProductsToCart = false
     ) {
     }
 

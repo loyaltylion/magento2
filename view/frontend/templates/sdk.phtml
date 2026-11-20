@@ -40,8 +40,20 @@ loyaltylion.init({ token: "<?= $escaper->escapeJs($connection->siteToken) ?>" })
     }
 })();
 <?php endif; ?>
+<?php if ($connection->addsFreeProductsToCart): ?>
+// free-product.js is deferred, so it has run by DOMContentLoaded.
+document.addEventListener('DOMContentLoaded', function () {
+    window.loyaltylionFreeProduct(<?= /* @noEscape */ json_encode([
+        'url' => $block->getUrl('loyaltylion/reward/add'),
+        'message' => (string) __('Your reward is in your cart.'),
+    ]) ?>);
+});
+<?php endif; ?>
 <?php
 $script = ob_get_clean();
+if ($connection->addsFreeProductsToCart): ?>
+<script defer src="<?= $escaper->escapeUrl($block->getViewFileUrl('Loyaltylion_Core::js/free-product.js')) ?>"></script>
+<?php endif;
 // Hyvä allows an inline script by registering it; elsewhere Magento's renderer does it.
 if (isset($hyvaCsp)): ?>
 <script><?= /* @noEscape */ $script ?></script>

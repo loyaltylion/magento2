@@ -7,6 +7,9 @@
                 <api_host>api.loyaltylion.com</api_host>
                 <sdk_host>sdk.loyaltylion.net</sdk_host>
             </connection>
+            <storefront>
+                <free_product_cart>0</free_product_cart>
+            </storefront>
         </loyaltylion>
     </default>
 </config>

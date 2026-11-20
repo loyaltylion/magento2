@@ -11,6 +11,7 @@ use Magento\Store\Model\ScopeInterface;
 class Config
 {
     private const PREFIX = 'loyaltylion/connection/';
+    private const FREE_PRODUCT_CART = 'loyaltylion/storefront/free_product_cart';
 
     public function __construct(
         private readonly ScopeConfigInterface $scopeConfig,
@@ -31,7 +32,8 @@ class Config
             $this->secret('api_key', $websiteId),
             $this->secret('sdk_token', $websiteId),
             (string) $this->value('api_host', $websiteId),
-            (string) $this->value('sdk_host', $websiteId)
+            (string) $this->value('sdk_host', $websiteId),
+            $this->scopeConfig->isSetFlag(self::FREE_PRODUCT_CART, ScopeInterface::SCOPE_WEBSITE, $websiteId)
         );
     }
 

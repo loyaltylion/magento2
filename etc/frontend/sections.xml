@@ -16,4 +16,7 @@
     <action name="customer/account/logout">
         <section name="loyaltylion-shopper"/>
     </action>
+    <action name="loyaltylion/reward/add">
+        <section name="cart"/>
+    </action>
 </config>

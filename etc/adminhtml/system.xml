@@ -44,6 +44,16 @@
                     <label>SDK host</label>
                 </field>
             </group>
+            <group id="storefront" translate="label" type="text" sortOrder="20"
+                   showInDefault="0" showInWebsite="1" showInStore="0">
+                <label>Storefront</label>
+                <field id="free_product_cart" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Add claimed free products to the cart</label>
+                    <comment>When a shopper claims a free product reward, put the product in their cart at no charge instead of showing them a code.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>
