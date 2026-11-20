@@ -77,6 +77,9 @@ class FreeProduct
         if ($answer['outcome'] !== 'available') {
             return $this->refused((string) $answer['reason']);
         }
+        if (!$this->meetsRequirement($quote, $answer)) {
+            return $this->refused('cart_requirement');
+        }
 
         try {
             $product = $this->products->get($answer['sku'], false, $quote->getStoreId(), true);
@@ -136,8 +139,9 @@ class FreeProduct
     }
 
     /**
-     * Takes out of the cart the reward lines LoyaltyLion no longer allows, and
-     * says whether it removed any. A line is kept when LoyaltyLion can't be
+     * Takes out of the cart the reward lines LoyaltyLion no longer allows, or
+     * whose cart requirement the rest of the cart no longer meets, and says
+     * whether it removed any. A line is kept when LoyaltyLion can't be
      * reached: it allowed the line when it was added, and an unreachable
      * service must not stop a checkout.
      */
@@ -151,7 +155,10 @@ class FreeProduct
             }
             [$kind, $id] = explode(':', $claim, 2);
             $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $quote->getCustomerId(), $kind, $id);
-            if ($answer !== null && $answer['outcome'] !== 'available') {
+            if ($answer === null) {
+                continue;
+            }
+            if ($answer['outcome'] !== 'available' || !$this->meetsRequirement($quote, $answer)) {
                 $quote->removeItem($item->getId());
                 $removed = true;
             }
@@ -163,6 +170,29 @@ class FreeProduct
         }
 
         return $removed;
+    }
+
+    /**
+     * Takes the reward lines with these ids out of the cart, for the SDK,
+     * which removes a line whose claim has ended or whose cart requirement is
+     * no longer met. A line that is not a reward is left alone.
+     *
+     * @param string[] $itemIds
+     */
+    public function removeLines(Quote $quote, array $itemIds): void
+    {
+        $removed = false;
+        foreach ($quote->getAllVisibleItems() as $item) {
+            if (in_array((string) $item->getId(), $itemIds, true) && $this->claimOf($item) !== null) {
+                $quote->removeItem($item->getId());
+                $removed = true;
+            }
+        }
+
+        if ($removed) {
+            $quote->collectTotals();
+            $this->quotes->save($quote);
+        }
     }
 
     /**
@@ -240,6 +270,23 @@ class FreeProduct
         $prefix = ClaimedFreeProducts::SESSION . ':';
 
         return str_starts_with($claim, $prefix) ? substr($claim, strlen($prefix)) : null;
+    }
+
+    private function meetsRequirement(Quote $quote, array $answer): bool
+    {
+        $paidCost = 0.0;
+        $paidQuantity = 0;
+        foreach ($quote->getAllVisibleItems() as $item) {
+            if ($this->claimOf($item) !== null) {
+                continue;
+            }
+            $paidCost += (float) $item->getBaseRowTotal() - (float) $item->getBaseDiscountAmount();
+            if ((float) $item->getBaseCalculationPrice() > 0) {
+                $paidQuantity += (int) $item->getQty();
+            }
+        }
+
+        return CartRequirement::met($answer['minimum_requirements'] ?? null, $paidCost, $paidQuantity);
     }
 
     private function claimOf(Item $item): ?string

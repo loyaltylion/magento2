@@ -18,41 +18,80 @@ ob_start();
 // Replace it whole when theirs changes; don't edit it here.
 ?>
 !function(t,n){var e=n.loyaltylion||[];if(!e.isLoyaltyLion){n.loyaltylion=e,void 0===n.lion&&(n.lion=e),e.version=2,e.isLoyaltyLion=!0;var o=n.URLSearchParams,i=n.sessionStorage,r="ll_loader_revision",a=(new Date).toISOString().replace(/-/g,""),s="function"==typeof o?function(){try{var t=new o(n.location.search).get(r);return t&&i.setItem(r,t),i.getItem(r)}catch(t){return""}}():null;c("<?= /* @noEscape */ $sdkBaseUrl ?>/static/2/"+a.slice(0,8)+"/loader"+(s?"-"+s:"")+".js");var l=!1;e.init=function(t){if(l)throw new Error("Cannot call lion.init more than once");l=!0;var n=e._token=t.token;if(!n)throw new Error("Token must be supplied to lion.init");var o=[];function i(t,n){t[n]=function(){o.push([n,Array.prototype.slice.call(arguments,0)])}}"_push configure bootstrap shutdown on removeListener authenticateCustomer".split(" ").forEach(function(t){i(e,t)}),c("<?= /* @noEscape */ $sdkBaseUrl ?>/sdk/start/"+a.slice(0,11)+"/"+n+".js"),e._initData=t,e._buffer=o}}function c(n){var e=t.getElementsByTagName("script")[0],o=t.createElement("script");o.src=n,o.crossOrigin="",e.parentNode.insertBefore(o,e)}}(document,window);
-loyaltylion.init({ token: "<?= $escaper->escapeJs($connection->siteToken) ?>" });
-<?php if ($connection->signsShoppers()): ?>
 (function () {
-    function signIn(shopper) {
-        if (shopper && shopper.packet) {
+    var token = "<?= $escaper->escapeJs($connection->siteToken) ?>";
+    var started = false;
+    var waiting = [];
+
+    function start(packet) {
+        started = true;
+        window.loyaltylion.init(
+            packet ? { token: token, customer: packet.customer, auth: packet.auth } : { token: token }
+        );
+        waiting.forEach(function (run) { run(); });
+    }
+<?php if ($connection->signsShoppers()): ?>
+
+    // The SDK settles what a shopper may do, and what belongs in their cart,
+    // as it starts. So it starts once the store has said who the shopper is,
+    // with them attached, and not as a guest who signs in a moment later.
+    function know(shopper) {
+        if (!started) {
+            start(shopper.packet);
+        } else if (shopper.packet) {
             window.loyaltylion.authenticateCustomer(shopper.packet);
         }
     }
-    // Hyvä announces the customer with an event. Luma keeps them in
-    // customer-data, which needs the RequireJS that only Luma loads.
+
+    // Hyvä announces its private content with an event, and leaves out a
+    // section it has nothing for, which is a guest.
     window.addEventListener('private-content-loaded', function (event) {
-        signIn((event.detail.data || {})['loyaltylion-shopper']);
+        know((event.detail.data || {})['loyaltylion-shopper'] || { packet: null });
     });
+    // Luma keeps it in customer-data, which needs the RequireJS that only Luma
+    // loads, and does not fetch a section for a first-time visitor unasked.
     if (typeof window.require === 'function') {
         window.require(['Magento_Customer/js/customer-data'], function (customerData) {
             var shopper = customerData.get('loyaltylion-shopper');
-            shopper.subscribe(signIn);
-            signIn(shopper());
+            shopper.subscribe(function (loaded) {
+                if ('packet' in loaded) {
+                    know(loaded);
+                }
+            });
+            // customer-data can't be asked for anything until the page has
+            // set it up, which this promise waits for.
+            customerData.getInitCustomerData().done(function () {
+                if ('packet' in shopper()) {
+                    know(shopper());
+                } else {
+                    customerData.reload(['loyaltylion-shopper'], false);
+                }
+            });
         });
     }
-})();
+<?php else: ?>
+
+    start(null);
 <?php endif; ?>
 <?php if ($connection->addsFreeProductsToCart): ?>
-// Lets the SDK offer a seamless free product on a store with no Shopify cart:
-// it makes the claim and hands the claimed reward to the hook free-product.js
-// registers, which puts the line in this store's cart.
-loyaltylion.configure({ __EXPERIMENTAL__enableFreeProductRewardsWithoutCart: true });
-// free-product.js is deferred, so it has run by DOMContentLoaded.
-document.addEventListener('DOMContentLoaded', function () {
-    window.loyaltylionFreeProduct(<?= /* @noEscape */ json_encode([
-        'url' => $block->getUrl('loyaltylion/reward/add'),
-        'message' => (string) __('Your reward is in your cart.'),
-    ]) ?>);
-});
+
+    // free-product.js is deferred, so it has run by DOMContentLoaded, and its
+    // hooks can only be registered on an SDK that has been started.
+    document.addEventListener('DOMContentLoaded', function () {
+        var register = function () {
+            window.loyaltylionFreeProduct(<?= /* @noEscape */ json_encode([
+                'url' => $block->getUrl('loyaltylion/reward/add'),
+                'message' => (string) __('Your reward is in your cart.'),
+            ]) ?>);
+        };
+        if (started) {
+            register();
+        } else {
+            waiting.push(register);
+        }
+    });
 <?php endif; ?>
+})();
 <?php
 $script = ob_get_clean();
 if ($connection->addsFreeProductsToCart): ?>
