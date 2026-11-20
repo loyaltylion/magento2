@@ -1,0 +1,7 @@
+<?php
+/** @var \Loyaltylion\Core\Block\CheckoutRedemption $block */
+/** @var \Magento\Framework\Escaper $escaper */
+// LoyaltyLion's SDK draws the "redeem points" form into this element.
+?>
+<link rel="stylesheet" href="<?= $escaper->escapeUrl($block->getViewFileUrl('Loyaltylion_Core::css/checkout-redemption.css')) ?>">
+<div class="loyaltylion-checkout-redemption" data-lion-checkout-redemption="cart"></div>

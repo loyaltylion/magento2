@@ -93,6 +93,12 @@
                     <comment>Tells shoppers how many points their order earns, in the cart and the mini cart.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="checkout_redemption" translate="label comment" type="select" sortOrder="80"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Let shoppers redeem points in the cart and at checkout</label>
+                    <comment>Shows signed-in members a way to spend points on a discount. Needs the Redeem at checkout reward in LoyaltyLion.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

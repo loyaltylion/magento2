@@ -2,8 +2,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Magento's checkout allows scripts only from the hosts its Content Security Policy lists, so the SDK
-             would be refused there. Nothing the module does needs it on this page. -->
-        <referenceBlock name="loyaltylion.sdk" remove="true"/>
+        <!-- Magento's checkout allows scripts only from the hosts its Content Security Policy lists. The SDK is
+             allowed there, and so shown, only while redeeming points at checkout is on. -->
+        <referenceBlock name="loyaltylion.sdk">
+            <arguments>
+                <argument name="needs_placement" xsi:type="string">checkout_redemption</argument>
+            </arguments>
+        </referenceBlock>
     </body>
 </page>

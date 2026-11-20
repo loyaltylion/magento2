@@ -2,6 +2,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Loyaltylion\Core\Api\ConnectionManagementInterface" type="Loyaltylion\Core\Model\ConnectionManagement"/>
+    <type name="Magento\Csp\Model\CompositePolicyCollector">
+        <arguments>
+            <argument name="collectors" xsi:type="array">
+                <item name="loyaltylion_sdk" xsi:type="object" sortOrder="4">Loyaltylion\Core\Model\Csp\AllowSdkAtCheckout\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
             <argument name="commands" xsi:type="array">

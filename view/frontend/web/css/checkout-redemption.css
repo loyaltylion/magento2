@@ -1,0 +1,38 @@
+/*
+ * Fits LoyaltyLion's redeem points at checkout form, whose markup follows
+ * Shopify's checkout, into Luma's cart summary and payment step. Luma has no
+ * styles for that markup's icons and spinners, so they are hidden, and the
+ * button takes Luma's own button look.
+ */
+.loyaltylion-checkout-redemption {
+    margin: 20px 0;
+}
+
+.loyaltylion-checkout-redemption .lion-checkout-redemption__header {
+    width: 100%;
+    margin: 0;
+}
+
+.loyaltylion-checkout-redemption .lion-checkout-redemption__header td {
+    padding: 0;
+}
+
+.loyaltylion-checkout-redemption .lion-checkout-redemption__header__points {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.loyaltylion-checkout-redemption .field__input-btn svg,
+.loyaltylion-checkout-redemption .field__input-btn .btn__spinner {
+    display: none;
+}
+
+.loyaltylion-checkout-redemption .field__input-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.loyaltylion-checkout-redemption .field__input-btn.btn--loading {
+    opacity: 0.5;
+    cursor: wait;
+}

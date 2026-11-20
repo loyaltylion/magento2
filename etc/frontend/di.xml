@@ -11,6 +11,13 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\Block\Onepage">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="loyaltylionCheckoutRedemption" xsi:type="object">Loyaltylion\Core\Block\Checkout\AddCheckoutRedemption</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Checkout\CustomerData\Cart">
         <plugin name="loyaltylion_cart_points_amount" type="Loyaltylion\Core\Plugin\AddPointsAmountToCartData"/>
     </type>
