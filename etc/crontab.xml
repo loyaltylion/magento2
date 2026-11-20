@@ -5,5 +5,8 @@
         <job name="loyaltylion_send_outbox" instance="Loyaltylion\Core\Cron\SendOutbox" method="execute">
             <schedule>* * * * *</schedule>
         </job>
+        <job name="loyaltylion_send_heartbeat" instance="Loyaltylion\Core\Cron\SendHeartbeat" method="execute">
+            <schedule>7 * * * *</schedule>
+        </job>
     </group>
 </config>

@@ -104,13 +104,18 @@ class Outbox
     }
 
     /**
+     * @param int|null $websiteId null counts every website's rows
      * @return array{waiting: int, parked: int, oldest_waiting_at: ?string}
      */
-    public function summary(): array
+    public function summary(?int $websiteId = null): array
     {
         $db = $this->db();
+        $select = $db->select();
+        if ($websiteId !== null) {
+            $select->where('website_id = ?', $websiteId);
+        }
         $row = $db->fetchRow(
-            $db->select()->from($this->table(), [
+            $select->from($this->table(), [
                 'waiting' => new \Zend_Db_Expr($db->quoteInto('COALESCE(SUM(state <> ?), 0)', self::PARKED)),
                 'parked' => new \Zend_Db_Expr($db->quoteInto('COALESCE(SUM(state = ?), 0)', self::PARKED)),
                 'oldest_waiting_at' => new \Zend_Db_Expr(
