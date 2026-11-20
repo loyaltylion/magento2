@@ -32,6 +32,8 @@
             <resource name="Loyaltylion_Core::config"/>
             <resource name="Magento_Customer::customer"/>
             <resource name="Magento_Customer::group"/>
+            <!-- Writing a member's tier onto their customer, and moving them to their tier's group -->
+            <resource name="Magento_Customer::manage"/>
         </resources>
     </integration>
 </config>

@@ -27,6 +27,9 @@ class Capabilities
     /** Tells LoyaltyLion when a customer subscribes to the newsletter */
     public const NEWSLETTER_SIGNUP = 'newsletter_signup';
 
+    /** Has the customer attribute LoyaltyLion writes a member's tier to */
+    public const CUSTOMER_TIER = 'customer_tier';
+
     /**
      * @return string[]
      */
@@ -34,6 +37,7 @@ class Capabilities
     {
         return [
             self::CONNECTION_SETUP,
+            self::CUSTOMER_TIER,
             self::NEWSLETTER_SIGNUP,
             self::OUTBOX,
             self::SDK_CART,
