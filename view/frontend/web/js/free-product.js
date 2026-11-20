@@ -8,8 +8,13 @@ define(["Magento_Customer/js/customer-data"], function (customerData) {
   "use strict";
 
   return function (config) {
-    var lion = window.loyaltylion;
     var registered = false;
+
+    // Read on every use: the SDK swaps the snippet's placeholder for itself
+    // once it has loaded.
+    function sdk() {
+      return window.loyaltylion;
+    }
 
     function isFreeProduct(claimedReward) {
       var reward = claimedReward.reward || {};
@@ -70,7 +75,7 @@ define(["Magento_Customer/js/customer-data"], function (customerData) {
     }
 
     function offerApplyOnEarlierClaims() {
-      var resources = lion.resources;
+      var resources = sdk().resources;
       var customer = resources && resources.customer;
       if (!customer || typeof customer.getClaimedRewards !== "function") {
         return;
@@ -92,11 +97,11 @@ define(["Magento_Customer/js/customer-data"], function (customerData) {
         return;
       }
       try {
-        lion.registerHook(
+        sdk().registerHook(
           "customers.rewards.claimed",
           hook("hide_claim_modal", "show_claim_modal")
         );
-        lion.registerHook(
+        sdk().registerHook(
           "customers.rewards.apply_claimed",
           hook("hide_claimed_reward_modal", "show_claimed_reward_modal")
         );
@@ -107,11 +112,11 @@ define(["Magento_Customer/js/customer-data"], function (customerData) {
       }
     }
 
-    if (!lion) {
+    if (!sdk()) {
       return;
     }
-    lion.on("ready", register);
-    if (typeof lion.registerHook === "function") {
+    sdk().on("ready", register);
+    if (typeof sdk().registerHook === "function") {
       register();
     }
   };
