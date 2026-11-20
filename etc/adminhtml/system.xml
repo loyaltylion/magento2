@@ -2,21 +2,46 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <section id="loyaltylion_core" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                 showInStore="0">
+        <tab id="loyaltylion" translate="label" sortOrder="900">
             <label>LoyaltyLion</label>
-            <tab>customer</tab>
-            <resource>Loyaltylion_Core::loyaltylion_core</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
-                   showInStore="0">
-                <label>General</label>
-                <field id="token" translate="label" type="text" sortOrder="20" showInDefault="0" showInWebsite="1"
-                       showInStore="0">
-                    <label>Token</label>
+        </tab>
+        <section id="loyaltylion" translate="label" type="text" sortOrder="10"
+                 showInDefault="0" showInWebsite="1" showInStore="0">
+            <label>Connection</label>
+            <tab>loyaltylion</tab>
+            <resource>Loyaltylion_Core::config</resource>
+            <group id="connection" translate="label comment" type="text" sortOrder="10"
+                   showInDefault="0" showInWebsite="1" showInStore="0">
+                <label>Connect this website to LoyaltyLion</label>
+                <comment>Each website connects to one LoyaltyLion site. Find these values in LoyaltyLion under Settings.</comment>
+                <field id="site_id" translate="label comment" type="text" sortOrder="10"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Site ID</label>
+                    <comment>The number after /sites/ in the address bar when you are signed in to LoyaltyLion.</comment>
+                    <validate>validate-digits</validate>
                 </field>
-                <field id="secret" translate="label" type="text" sortOrder="20" showInDefault="0" showInWebsite="1"
-                       showInStore="0">
-                    <label>Secret</label>
+                <field id="site_token" translate="label" type="text" sortOrder="20"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Site token</label>
+                </field>
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="30"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>API key</label>
+                    <comment>Needs the write_orders and write_customers scopes. Sends this website's orders and customers to LoyaltyLion.</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="sdk_token" translate="label comment" type="obscure" sortOrder="40"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>SDK secret token</label>
+                    <comment>Signs each shopper in to your loyalty program on the storefront.</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <!-- Not shown in the admin: set with bin/magento config:set to point a store at another LoyaltyLion environment. -->
+                <field id="api_host" type="text" sortOrder="100" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>API host</label>
+                </field>
+                <field id="sdk_host" type="text" sortOrder="110" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>SDK host</label>
                 </field>
             </group>
         </section>

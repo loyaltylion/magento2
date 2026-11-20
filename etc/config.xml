@@ -3,9 +3,10 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <loyaltylion>
-            <settings>
-                <enabled>1</enabled>
-            </settings>
+            <connection>
+                <api_host>api.loyaltylion.com</api_host>
+                <sdk_host>sdk.loyaltylion.net</sdk_host>
+            </connection>
         </loyaltylion>
     </default>
 </config>

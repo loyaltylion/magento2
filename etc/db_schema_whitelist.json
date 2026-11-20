@@ -1,0 +1,23 @@
+{
+    "loyaltylion_outbox": {
+        "column": {
+            "id": true,
+            "kind": true,
+            "entity_id": true,
+            "website_id": true,
+            "state": true,
+            "attempts": true,
+            "version": true,
+            "available_at": true,
+            "created_at": true,
+            "last_error": true
+        },
+        "index": {
+            "LOYALTYLION_OUTBOX_STATE_AVAILABLE_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "LOYALTYLION_OUTBOX_KIND_ENTITY_ID_WEBSITE_ID": true
+        }
+    }
+}
