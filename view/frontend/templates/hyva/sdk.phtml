@@ -1,0 +1,50 @@
+<?php
+/**
+ * Hyvä pages load no RequireJS, so the scripts sdk.phtml starts through
+ * x-magento-init never run there. This does their work with Hyvä's events.
+ *
+ * @var \Loyaltylion\Core\Block\Sdk $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+list($token, $secret) = $block->getCredentialsForContext();
+if (!$block->isEnabled($token, $secret)) {
+    return;
+}
+$freeProductCart = $block->getFreeProductCartConfig();
+?>
+<?php if ($freeProductCart): ?>
+<script defer src="<?= $escaper->escapeUrl($block->getViewFileUrl('Loyaltylion_Core::js/free-product-hooks.js')) ?>"></script>
+<?php endif; ?>
+<script>
+(function () {
+    window.addEventListener('private-content-loaded', function (event) {
+        var lionCustomer = (event.detail.data || {})['lion-customer'];
+        if (lionCustomer && lionCustomer.logged_in) {
+            window.loyaltylion.authenticateCustomer({
+                customer: lionCustomer.customer,
+                auth: { date: lionCustomer.date, token: lionCustomer.auth_token }
+            });
+        }
+    });
+<?php if ($freeProductCart): ?>
+    // The hooks script is deferred, so it has run by DOMContentLoaded.
+    document.addEventListener('DOMContentLoaded', function () {
+        window.loyaltylionFreeProduct(<?= /* @noEscape */ $freeProductCart ?>, function (message) {
+            // The cart and checkout pages are drawn by the server, so only a
+            // new page shows the line; every other page has just the mini cart.
+            if (/\/checkout(\/|$)/.test(window.location.pathname)) {
+                window.location.reload();
+                return;
+            }
+            window.dispatchMessages && window.dispatchMessages([{ type: 'success', text: message }], 5000);
+            window.dispatchEvent(new CustomEvent('reload-customer-section-data'));
+        });
+    });
+<?php endif; ?>
+})();
+</script>
+<?php
+// Hyvä versions from before its strict Content Security Policy theme pass no $hyvaCsp.
+if (isset($hyvaCsp)) {
+    $hyvaCsp->registerInlineScript();
+}
