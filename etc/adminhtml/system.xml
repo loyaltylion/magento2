@@ -53,6 +53,34 @@
                     <comment>When a shopper claims a free product reward, put the product in their cart at no charge instead of showing them a code.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="loyalty_page" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Show the loyalty page</label>
+                    <comment>A page on your store that holds your loyalty program, at the address below. A page of your own at the same address is shown instead.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="loyalty_page_url_key" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Loyalty page address</label>
+                    <comment>What comes after your store's address, such as loyalty.</comment>
+                    <depends>
+                        <field id="loyalty_page">1</field>
+                    </depends>
+                </field>
+                <field id="menu_link" translate="label" type="select" sortOrder="40"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Link the loyalty page from the main menu</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="loyalty_page">1</field>
+                    </depends>
+                </field>
+                <field id="account_page" translate="label comment" type="select" sortOrder="50"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Show Rewards in the customer's account</label>
+                    <comment>Adds a Rewards page to the account menu of signed-in shoppers.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

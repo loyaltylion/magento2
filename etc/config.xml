@@ -9,6 +9,10 @@
             </connection>
             <storefront>
                 <free_product_cart>0</free_product_cart>
+                <loyalty_page>1</loyalty_page>
+                <loyalty_page_url_key>loyalty</loyalty_page_url_key>
+                <menu_link>0</menu_link>
+                <account_page>1</account_page>
             </storefront>
         </loyaltylion>
     </default>
