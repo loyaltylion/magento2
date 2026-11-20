@@ -159,6 +159,14 @@ class Sender
                     );
                 case Outbox::CUSTOMER_DELETED:
                     return $this->client->send($connection, 'DELETE', '/customers/' . $id);
+                case Outbox::CART_SESSION_RELEASED:
+                    $released = json_decode((string) $row['payload'], true) ?: [];
+
+                    return $this->client->send($connection, 'DELETE', sprintf(
+                        '/customers/%s/cart_sessions/%s',
+                        rawurlencode((string) ($released['customer_id'] ?? '')),
+                        rawurlencode((string) ($released['session'] ?? ''))
+                    ));
                 default:
                     return null;
             }

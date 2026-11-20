@@ -25,6 +25,6 @@ class CheckRewardLinesAtOrder implements ObserverInterface
             );
         }
 
-        $this->freeProduct->labelOrderLines($observer->getEvent()->getOrder(), $quote);
+        $this->freeProduct->markOrderLines($observer->getEvent()->getOrder(), $quote);
     }
 }

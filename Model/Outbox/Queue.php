@@ -23,13 +23,13 @@ class Queue
      * @param int|string|null $entityId
      * @param int|string|null $websiteId
      */
-    public function add(string $kind, $entityId, $websiteId): void
+    public function add(string $kind, $entityId, $websiteId, ?array $payload = null): void
     {
         // This runs inside the shopper's or the admin's own save, which must
         // go through whatever happens here.
         try {
             if ($entityId && $this->config->forWebsite($websiteId)->sendsChanges()) {
-                $this->outbox->add($kind, (int) $entityId, (int) $websiteId);
+                $this->outbox->add($kind, (int) $entityId, (int) $websiteId, $payload);
             }
         } catch (\Throwable $e) {
             $this->logger->error('[LoyaltyLion] Could not queue a change: ' . $e->getMessage());

@@ -20,14 +20,15 @@ use Psr\Log\LoggerInterface;
 /**
  * A claimed free product as a line in the shopper's cart at no charge.
  *
- * The line carries the claim's code as an item option. LoyaltyLion says
- * whether the code may be added, and the order that holds the line reports
- * the code back, which marks the claim as used. The line uses no coupon, so
- * the shopper's own discount code still applies to the rest of the cart.
+ * The line carries the claim as an item option, as "kind:id" (see
+ * ClaimedFreeProducts for the two kinds). LoyaltyLion says whether the claim
+ * may be added, and the order that holds the line reports the claim back,
+ * which marks it as used. The line uses no coupon, so the shopper's own
+ * discount code still applies to the rest of the cart.
  */
 class FreeProduct
 {
-    public const OPTION_CODE = 'loyaltylion_reward_code';
+    public const OPTION_CODE = 'loyaltylion_reward';
 
     /** Product types that go in a cart with no choice left for the shopper to make */
     private const PRODUCT_TYPES = ['simple', 'virtual', 'downloadable'];
@@ -57,18 +58,19 @@ class FreeProduct
      * @param int|string|null $customerId
      * @return array ["added" => bool, "reason" => string|null]
      */
-    public function addToCart(Quote $quote, $customerId, string $code): array
+    public function addToCart(Quote $quote, $customerId, string $kind, string $id): array
     {
-        $code = strtoupper(trim($code));
-        if ($code === '') {
+        $id = strtoupper(trim($id));
+        if ($id === '') {
             return $this->refused('not_found');
         }
+        $claim = $kind . ':' . $id;
 
-        if ($this->findLine($quote, $code)) {
+        if ($this->findLine($quote, $claim)) {
             return ['added' => true, 'reason' => null];
         }
 
-        $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $customerId, $code);
+        $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $customerId, $kind, $id);
         if ($answer === null) {
             return $this->refused('unreachable');
         }
@@ -90,14 +92,14 @@ class FreeProduct
 
         // An option only this line has keeps Magento from merging it into a
         // line of the same product that the shopper is paying for.
-        $product->addCustomOption(self::OPTION_CODE, $code);
+        $product->addCustomOption(self::OPTION_CODE, $claim);
         $product->addCustomOption(
             'additional_options',
             $this->serializer->serialize([['label' => __('Reward'), 'value' => __('Free with your points')]])
         );
 
         try {
-            $item = $quote->addProduct($product, new DataObject(['qty' => 1, self::OPTION_CODE => $code]));
+            $item = $quote->addProduct($product, new DataObject(['qty' => 1, self::OPTION_CODE => $claim]));
         } catch (LocalizedException $e) {
             return $this->refused('out_of_stock');
         }
@@ -106,7 +108,7 @@ class FreeProduct
         }
 
         $this->makeFree($item);
-        $this->releaseCoupon($quote, $code);
+        $this->releaseCoupon($quote, $claim);
         $quote->collectTotals();
         $this->quotes->save($quote);
 
@@ -114,22 +116,22 @@ class FreeProduct
     }
 
     /**
-     * Holds every reward line at one unit and no charge, and takes a reward's
-     * code off the cart as a coupon: the same claim must not also discount a
-     * unit the shopper pays for.
+     * Holds every reward line at one unit and no charge, and takes a code
+     * reward's code off the cart as a coupon: the same claim must not also
+     * discount a unit the shopper pays for.
      */
     public function hold(Quote $quote): void
     {
         foreach ($quote->getAllVisibleItems() as $item) {
-            $code = $this->codeOf($item);
-            if ($code === null) {
+            $claim = $this->claimOf($item);
+            if ($claim === null) {
                 continue;
             }
             if ((float) $item->getQty() !== 1.0) {
                 $item->setQty(1);
             }
             $this->makeFree($item);
-            $this->releaseCoupon($quote, $code);
+            $this->releaseCoupon($quote, $claim);
         }
     }
 
@@ -143,11 +145,12 @@ class FreeProduct
     {
         $removed = false;
         foreach ($quote->getAllVisibleItems() as $item) {
-            $code = $this->codeOf($item);
-            if ($code === null) {
+            $claim = $this->claimOf($item);
+            if ($claim === null) {
                 continue;
             }
-            $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $quote->getCustomerId(), $code);
+            [$kind, $id] = explode(':', $claim, 2);
+            $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $quote->getCustomerId(), $kind, $id);
             if ($answer !== null && $answer['outcome'] !== 'available') {
                 $quote->removeItem($item->getId());
                 $removed = true;
@@ -163,32 +166,41 @@ class FreeProduct
     }
 
     /**
-     * Carries the "Reward" label from the cart onto the order's lines, so the
-     * merchant sees why a line has no price on the order, invoice and emails.
-     * Magento copies a line's buy request to the order but not this label.
+     * Carries each reward line's claim and its "Reward" label from the cart
+     * onto the order's lines. The label is so the merchant sees why a line has
+     * no price on the order, invoice and emails. The claim is what the order
+     * reports to LoyaltyLion.
+     *
+     * Magento copies a line's buy request to the order, and that also holds
+     * the claim, but a shopper can put anything in the buy request of a line
+     * they add themselves. The cart line's own option is set only here.
      */
-    public function labelOrderLines(OrderInterface $order, Quote $quote): void
+    public function markOrderLines(OrderInterface $order, Quote $quote): void
     {
         foreach ($order->getAllItems() as $orderItem) {
             $quoteItem = $quote->getItemById($orderItem->getQuoteItemId());
-            $label = $quoteItem ? $quoteItem->getOptionByCode('additional_options') : null;
-            if (!$quoteItem || !$label || $this->codeOf($quoteItem) === null) {
+            $claim = $quoteItem ? $this->claimOf($quoteItem) : null;
+            if ($claim === null) {
                 continue;
             }
             $options = $orderItem->getProductOptions() ?: [];
-            $options['additional_options'] = $this->serializer->unserialize($label->getValue());
+            $options[self::OPTION_CODE] = $claim;
+            $label = $quoteItem->getOptionByCode('additional_options');
+            if ($label) {
+                $options['additional_options'] = $this->serializer->unserialize($label->getValue());
+            }
             $orderItem->setProductOptions($options);
         }
     }
 
     /**
-     * Removes the store's coupon for each claim an order used as a free line.
-     * LoyaltyLion also created the claim's code as a coupon, for stores that
-     * don't add the product to the cart, and that coupon is still unused.
+     * Removes the store's coupon for each code reward an order used as a free
+     * line. LoyaltyLion also created the claim's code as a coupon, for stores
+     * that don't add the product to the cart, and that coupon is still unused.
      */
     public function retireCoupons(OrderInterface $order): void
     {
-        foreach ($this->codesOnOrder($order) as $code) {
+        foreach ($this->claimsOnOrder($order, ClaimedFreeProducts::CODE) as $code) {
             try {
                 $coupon = $this->couponFactory->create()->loadByCode($code);
                 if ($coupon->getId()) {
@@ -203,32 +215,44 @@ class FreeProduct
     }
 
     /**
-     * @return string[] the claim codes of the free lines on an order
+     * @param string $kind ClaimedFreeProducts::SESSION or ::CODE
+     * @return string[] the ids of the claims of that kind on an order's free lines
      */
-    public function codesOnOrder(OrderInterface $order): array
+    public function claimsOnOrder(OrderInterface $order, string $kind): array
     {
-        $codes = [];
+        $ids = [];
         foreach ($order->getAllVisibleItems() as $item) {
-            $request = $item->getProductOptionByCode('info_buyRequest');
-            if (is_array($request) && !empty($request[self::OPTION_CODE])) {
-                $codes[] = (string) $request[self::OPTION_CODE];
+            $claim = (string) $item->getProductOptionByCode(self::OPTION_CODE);
+            if (str_starts_with($claim, $kind . ':')) {
+                $ids[] = substr($claim, strlen($kind) + 1);
             }
         }
 
-        return array_values(array_unique($codes));
+        return array_values(array_unique($ids));
     }
 
-    private function codeOf(Item $item): ?string
+    /**
+     * @return string|null the cart session a line holds, for a seamless free product
+     */
+    public function sessionOf(Item $item): ?string
+    {
+        $claim = (string) $this->claimOf($item);
+        $prefix = ClaimedFreeProducts::SESSION . ':';
+
+        return str_starts_with($claim, $prefix) ? substr($claim, strlen($prefix)) : null;
+    }
+
+    private function claimOf(Item $item): ?string
     {
         $option = $item->getOptionByCode(self::OPTION_CODE);
 
         return $option && $option->getValue() !== null ? (string) $option->getValue() : null;
     }
 
-    private function findLine(Quote $quote, string $code): ?Item
+    private function findLine(Quote $quote, string $claim): ?Item
     {
         foreach ($quote->getAllVisibleItems() as $item) {
-            if ($this->codeOf($item) === $code) {
+            if ($this->claimOf($item) === $claim) {
                 return $item;
             }
         }
@@ -244,9 +268,9 @@ class FreeProduct
         $item->getProduct()->setIsSuperMode(true);
     }
 
-    private function releaseCoupon(Quote $quote, string $code): void
+    private function releaseCoupon(Quote $quote, string $claim): void
     {
-        if (strtoupper((string) $quote->getCouponCode()) === $code) {
+        if (ClaimedFreeProducts::CODE . ':' . strtoupper((string) $quote->getCouponCode()) === $claim) {
             $quote->setCouponCode('');
         }
     }

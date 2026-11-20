@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Loyaltylion\Core\Model\Outbox;
 
+use Loyaltylion\Core\Model\Reward\ClaimedFreeProducts;
 use Loyaltylion\Core\Model\Reward\FreeProduct;
 use Magento\Sales\Api\Data\OrderInterface;
 
@@ -24,7 +25,7 @@ class OrderState
             'entity_id' => (int) $order->getEntityId(),
             'increment_id' => (string) $order->getIncrementId(),
             'state' => (string) $order->getState(),
-            'created_at' => (string) $order->getCreatedAt(),
+            'created_at' => Timestamp::utc((string) $order->getCreatedAt()),
             'customer_id' => $order->getCustomerIsGuest() ? null : $this->integer($order->getCustomerId()),
             'customer_email' => (string) $order->getCustomerEmail(),
             'customer_group_id' => $this->integer($order->getCustomerGroupId()),
@@ -38,7 +39,8 @@ class OrderState
             'remote_ip' => $order->getRemoteIp() ?: null,
             // Free products added at no charge use no coupon, so their claims
             // are not in coupon_code.
-            'reward_codes' => $this->freeProduct->codesOnOrder($order) ?: null,
+            'reward_codes' => $this->freeProduct->claimsOnOrder($order, ClaimedFreeProducts::CODE) ?: null,
+            'reward_sessions' => $this->freeProduct->claimsOnOrder($order, ClaimedFreeProducts::SESSION) ?: null,
         ];
 
         // Magento's own API leaves a field out rather than sending null, and

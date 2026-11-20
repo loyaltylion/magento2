@@ -10,13 +10,25 @@ use Psr\Log\LoggerInterface;
 
 /**
  * What LoyaltyLion says about a free product a shopper has claimed. This is
- * the only place that asks, so the rest of the module does not depend on how
- * a claim is identified or which of LoyaltyLion's APIs answers.
+ * the only place that asks.
+ *
+ * A claim is one of two kinds. A seamless free product is held as a cart
+ * session, known by its identifier. A free product code reward is a discount
+ * code, which the store can add as a free line instead of asking the shopper
+ * to paste it.
  */
 class ClaimedFreeProducts
 {
     // A shopper's request waits on this.
     private const TIMEOUT_SECONDS = 3;
+
+    public const SESSION = 'session';
+    public const CODE = 'code';
+
+    private const PATHS = [
+        self::SESSION => '/customers/%s/cart_sessions/%s',
+        self::CODE => '/customers/%s/free_product_rewards/%s',
+    ];
 
     public function __construct(
         private readonly Config $config,
@@ -31,8 +43,12 @@ class ClaimedFreeProducts
      * @return array|null ["outcome" => "available", "sku" => string], or ["outcome" => "unavailable",
      *                    "reason" => string], or null when LoyaltyLion can't be reached
      */
-    public function find($websiteId, $customerId, string $code): ?array
+    public function find($websiteId, $customerId, string $kind, string $id): ?array
     {
+        if (!isset(self::PATHS[$kind])) {
+            return ['outcome' => 'unavailable', 'reason' => 'not_found'];
+        }
+
         if (!$customerId) {
             return ['outcome' => 'unavailable', 'reason' => 'signed_out'];
         }
@@ -45,7 +61,7 @@ class ClaimedFreeProducts
         $response = $this->client->send(
             $connection,
             'GET',
-            sprintf('/customers/%s/free_product_rewards/%s', rawurlencode((string) $customerId), rawurlencode($code)),
+            sprintf(self::PATHS[$kind], rawurlencode((string) $customerId), rawurlencode($id)),
             null,
             self::TIMEOUT_SECONDS
         );

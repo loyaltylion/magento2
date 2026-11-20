@@ -18,6 +18,7 @@ class Outbox
     public const CUSTOMER = 'customer';
     public const CUSTOMER_REGISTERED = 'customer_registered';
     public const CUSTOMER_DELETED = 'customer_deleted';
+    public const CART_SESSION_RELEASED = 'cart_session_released';
 
     private const TABLE = 'loyaltylion_outbox';
     private const WAITING = 'waiting';
@@ -28,7 +29,10 @@ class Outbox
     {
     }
 
-    public function add(string $kind, int $entityId, int $websiteId): void
+    /**
+     * @param array|null $payload only for a row whose entity can't be read again when it is sent
+     */
+    public function add(string $kind, int $entityId, int $websiteId, ?array $payload = null): void
     {
         $this->db()->insertOnDuplicate(
             $this->table(),
@@ -36,8 +40,10 @@ class Outbox
                 'kind' => $kind,
                 'entity_id' => $entityId,
                 'website_id' => $websiteId,
+                'payload' => $payload === null ? null : json_encode($payload),
             ],
             [
+                'payload',
                 'state' => new \Zend_Db_Expr($this->db()->quote(self::WAITING)),
                 'attempts' => new \Zend_Db_Expr('0'),
                 'version' => new \Zend_Db_Expr('version + 1'),

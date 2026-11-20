@@ -41,6 +41,10 @@ loyaltylion.init({ token: "<?= $escaper->escapeJs($connection->siteToken) ?>" })
 })();
 <?php endif; ?>
 <?php if ($connection->addsFreeProductsToCart): ?>
+// Lets the SDK offer a seamless free product on a store with no Shopify cart:
+// it makes the claim and hands the claimed reward to the hook free-product.js
+// registers, which puts the line in this store's cart.
+loyaltylion.configure({ __EXPERIMENTAL__enableFreeProductRewardsWithoutCart: true });
 // free-product.js is deferred, so it has run by DOMContentLoaded.
 document.addEventListener('DOMContentLoaded', function () {
     window.loyaltylionFreeProduct(<?= /* @noEscape */ json_encode([

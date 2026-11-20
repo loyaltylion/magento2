@@ -7,6 +7,8 @@
         <column xsi:type="varchar" name="kind" length="32" nullable="false"/>
         <column xsi:type="int" name="entity_id" unsigned="true" nullable="false"/>
         <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="payload" length="255" nullable="true"
+                comment="What to send for a row whose entity is gone by the time it is sent"/>
         <column xsi:type="varchar" name="state" length="16" nullable="false" default="waiting"/>
         <column xsi:type="smallint" name="attempts" unsigned="true" nullable="false" default="0"/>
         <column xsi:type="int" name="version" unsigned="true" nullable="false" default="1"

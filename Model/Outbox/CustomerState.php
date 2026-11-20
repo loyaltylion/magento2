@@ -18,7 +18,7 @@ class CustomerState
             'email' => (string) $customer->getEmail(),
             'firstname' => $customer->getFirstname() ?: null,
             'lastname' => $customer->getLastname() ?: null,
-            'created_at' => $customer->getCreatedAt() ?: null,
+            'created_at' => $customer->getCreatedAt() ? Timestamp::utc($customer->getCreatedAt()) : null,
             'dob' => $customer->getDob() ?: null,
         ];
 

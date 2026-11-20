@@ -10,7 +10,8 @@
             "version": true,
             "available_at": true,
             "created_at": true,
-            "last_error": true
+            "last_error": true,
+            "payload": true
         },
         "index": {
             "LOYALTYLION_OUTBOX_STATE_AVAILABLE_AT": true

@@ -18,14 +18,26 @@ window.loyaltylionFreeProduct = function (config) {
     return window.loyaltylion;
   }
 
-  function isFreeProduct(claimedReward) {
+  // What the store is asked to add, or null for a reward that isn't a free
+  // product. A seamless free product is a cart session the SDK has just
+  // opened; a free product code reward is its code.
+  function claimOf(claimedReward) {
     var reward = claimedReward.reward || {};
-    return (
-      Boolean(claimedReward.redeemable && claimedReward.redeemable.code) &&
+    var redeemable = claimedReward.redeemable || {};
+
+    if (reward.kind === "product_cart") {
+      var session =
+        redeemable.shopifyCartLineItemContext ||
+        redeemable.cart_line_identifier;
+      return session ? { session: session } : null;
+    }
+
+    return redeemable.code &&
       reward.kind === "product_discount_voucher" &&
       (reward.discountType || reward.discount_type) === "percentage" &&
       Number(reward.discountAmount || reward.discount_amount) === 100
-    );
+      ? { code: redeemable.code }
+      : null;
   }
 
   function showInCart() {
@@ -53,12 +65,12 @@ window.loyaltylionFreeProduct = function (config) {
     window.dispatchEvent(new CustomEvent("reload-customer-section-data"));
   }
 
-  function add(claimedReward) {
+  function add(claimedReward, claim) {
     return fetch(config.url, {
       method: "POST",
       credentials: "same-origin",
       headers: { "X-Requested-With": "XMLHttpRequest" },
-      body: new URLSearchParams({ code: claimedReward.redeemable.code }),
+      body: new URLSearchParams(claim),
     })
       .then(function (response) {
         return response.json();
@@ -67,7 +79,10 @@ window.loyaltylionFreeProduct = function (config) {
         if (!result.added) {
           return false;
         }
-        claimedReward.setApplied(true);
+        // Only a code reward has an "Apply" to mark as done.
+        if (typeof claimedReward.setApplied === "function") {
+          claimedReward.setApplied(true);
+        }
         showInCart();
         return true;
       })
@@ -78,10 +93,12 @@ window.loyaltylionFreeProduct = function (config) {
 
   function hook(added, notAdded) {
     return function (payload) {
-      if (!isFreeProduct(payload.claimedReward)) {
+
+      var claim = claimOf(payload.claimedReward);
+      if (!claim) {
         return Promise.resolve({ action: notAdded });
       }
-      return add(payload.claimedReward).then(function (wasAdded) {
+      return add(payload.claimedReward, claim).then(function (wasAdded) {
         return { action: wasAdded ? added : notAdded };
       });
     };
@@ -97,7 +114,8 @@ window.loyaltylionFreeProduct = function (config) {
       .getClaimedRewards({ hideUsed: true, hideVoid: true })
       .then(function (claimedRewards) {
         claimedRewards.forEach(function (claimedReward) {
-          if (isFreeProduct(claimedReward)) {
+          var claim = claimOf(claimedReward);
+          if (claim && claim.code) {
             claimedReward.setCanBeApplied(true);
           }
         });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Loyaltylion\Core\Controller\Reward;
 
+use Loyaltylion\Core\Model\Reward\ClaimedFreeProducts;
 use Loyaltylion\Core\Model\Reward\FreeProduct;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -14,7 +15,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Adds a claimed free product to the signed-in shopper's cart at no charge.
- * The LoyaltyLion SDK's hooks post the claim's code here.
+ * The LoyaltyLion SDK's hooks post the claim here: a seamless free product's
+ * cart session, or a free product code reward's code.
  */
 class Add implements HttpPostActionInterface
 {
@@ -40,12 +42,15 @@ class Add implements HttpPostActionInterface
             return $result->setData(['added' => false, 'reason' => 'signed_out']);
         }
 
+        $session = (string) $this->request->getParam('session');
+
         try {
             return $result->setData(
                 $this->freeProduct->addToCart(
                     $this->checkoutSession->getQuote(),
                     $this->customerSession->getCustomerId(),
-                    (string) $this->request->getParam('code')
+                    $session !== '' ? ClaimedFreeProducts::SESSION : ClaimedFreeProducts::CODE,
+                    $session !== '' ? $session : (string) $this->request->getParam('code')
                 )
             );
         } catch (\Exception $e) {
