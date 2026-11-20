@@ -1,0 +1,51 @@
+<?php
+/**
+ * LoyaltyLion's SDK on every storefront page: the loader snippet, then the
+ * signed-in shopper handed to it when the theme knows who they are.
+ *
+ * @var \Loyaltylion\Core\Block\Sdk $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$connection = $block->getConnection();
+if (!$connection->showsSdk()) {
+    return;
+}
+$sdkBaseUrl = $escaper->escapeJs('https://' . $connection->sdkHost);
+ob_start();
+// The loader is LoyaltyLion's own snippet, as its developer documentation and
+// luna's Tonks::GenerateSnippet give it, with only the SDK's address filled in.
+// Replace it whole when theirs changes; don't edit it here.
+?>
+!function(t,n){var e=n.loyaltylion||[];if(!e.isLoyaltyLion){n.loyaltylion=e,void 0===n.lion&&(n.lion=e),e.version=2,e.isLoyaltyLion=!0;var o=n.URLSearchParams,i=n.sessionStorage,r="ll_loader_revision",a=(new Date).toISOString().replace(/-/g,""),s="function"==typeof o?function(){try{var t=new o(n.location.search).get(r);return t&&i.setItem(r,t),i.getItem(r)}catch(t){return""}}():null;c("<?= /* @noEscape */ $sdkBaseUrl ?>/static/2/"+a.slice(0,8)+"/loader"+(s?"-"+s:"")+".js");var l=!1;e.init=function(t){if(l)throw new Error("Cannot call lion.init more than once");l=!0;var n=e._token=t.token;if(!n)throw new Error("Token must be supplied to lion.init");var o=[];function i(t,n){t[n]=function(){o.push([n,Array.prototype.slice.call(arguments,0)])}}"_push configure bootstrap shutdown on removeListener authenticateCustomer".split(" ").forEach(function(t){i(e,t)}),c("<?= /* @noEscape */ $sdkBaseUrl ?>/sdk/start/"+a.slice(0,11)+"/"+n+".js"),e._initData=t,e._buffer=o}}function c(n){var e=t.getElementsByTagName("script")[0],o=t.createElement("script");o.src=n,o.crossOrigin="",e.parentNode.insertBefore(o,e)}}(document,window);
+loyaltylion.init({ token: "<?= $escaper->escapeJs($connection->siteToken) ?>" });
+<?php if ($connection->signsShoppers()): ?>
+(function () {
+    function signIn(shopper) {
+        if (shopper && shopper.packet) {
+            window.loyaltylion.authenticateCustomer(shopper.packet);
+        }
+    }
+    // Hyvä announces the customer with an event. Luma keeps them in
+    // customer-data, which needs the RequireJS that only Luma loads.
+    window.addEventListener('private-content-loaded', function (event) {
+        signIn((event.detail.data || {})['loyaltylion-shopper']);
+    });
+    if (typeof window.require === 'function') {
+        window.require(['Magento_Customer/js/customer-data'], function (customerData) {
+            var shopper = customerData.get('loyaltylion-shopper');
+            shopper.subscribe(signIn);
+            signIn(shopper());
+        });
+    }
+})();
+<?php endif; ?>
+<?php
+$script = ob_get_clean();
+// Hyvä allows an inline script by registering it; elsewhere Magento's renderer does it.
+if (isset($hyvaCsp)): ?>
+<script><?= /* @noEscape */ $script ?></script>
+<?php $hyvaCsp->registerInlineScript(); ?>
+<?php else: ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>
+<?php endif; ?>

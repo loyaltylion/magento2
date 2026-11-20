@@ -1,0 +1,10 @@
+type Customer {
+    loyaltylion_auth: LoyaltyLionAuth @resolver(class: "Loyaltylion\\Core\\Model\\Resolver\\ShopperAuth") @doc(description: "What a headless storefront passes to loyaltylion.authenticateCustomer to sign this customer in to the loyalty program. Null when the website is not connected to LoyaltyLion.")
+}
+
+type LoyaltyLionAuth @doc(description: "A signed proof that the store has signed this customer in.") {
+    customer_id: String! @doc(description: "The customer's id, as customer.id")
+    email: String! @doc(description: "The customer's email, as customer.email")
+    date: String! @doc(description: "When the proof was signed, as auth.date")
+    token: String! @doc(description: "The signature, as auth.token")
+}

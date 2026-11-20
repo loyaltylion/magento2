@@ -4,4 +4,11 @@
     <type name="Magento\Customer\Api\AccountManagementInterface">
         <plugin name="loyaltylion_queue_registration" type="Loyaltylion\Core\Plugin\QueueRegistration"/>
     </type>
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
+        <arguments>
+            <argument name="sectionSourceMap" xsi:type="array">
+                <item name="loyaltylion-shopper" xsi:type="string">Loyaltylion\Core\CustomerData\Shopper</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
