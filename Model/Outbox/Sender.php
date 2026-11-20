@@ -56,7 +56,21 @@ class Sender
                     continue;
                 }
 
-                $outcome = $this->sendRow($row, $this->config->forWebsite($websiteId));
+                try {
+                    $outcome = $this->sendRow($row, $this->config->forWebsite($websiteId));
+                } catch (\Throwable $e) {
+                    // One order or customer the store can't read must not hold
+                    // up the rows behind it.
+                    $outcome = Outcome::RETRY;
+                    $this->outbox->retryLater(
+                        $row,
+                        Outcome::waitBeforeRetry((int) $row['attempts']),
+                        'Could not be read: ' . $e->getMessage()
+                    );
+                    $this->logger->error(
+                        sprintf('[LoyaltyLion] %s %d could not be sent: %s', $row['kind'], $row['entity_id'], $e->getMessage())
+                    );
+                }
                 $counts[$outcome] = ($counts[$outcome] ?? 0) + 1;
 
                 // Every other row of the website would be refused the same way.
