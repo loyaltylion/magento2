@@ -1,8 +1,14 @@
-<integrations>
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Integration:etc/integration/integration.xsd">
+    <!-- Magento reads this on every setup:upgrade. Changing the resources makes it recreate the integration,
+         which the merchant then approves again under System > Integrations. -->
     <integration name="LoyaltyLion">
+        <email>support@loyaltylion.com</email>
+        <endpoint_url>https://app.loyaltylion.com/magento2/callback</endpoint_url>
+        <identity_link_url>https://app.loyaltylion.com/magento2/link</identity_link_url>
         <resources>
-            <!-- Each line is something LoyaltyLion calls, with the parents Magento needs listed above it.
-                 Changing this list makes Magento ask the merchant to approve the integration again. -->
+            <!-- Each group is something LoyaltyLion calls, with the parents Magento needs listed above it. -->
             <!-- Reward codes: cart price rules and their coupons -->
             <resource name="Magento_Backend::marketing"/>
             <resource name="Magento_CatalogRule::promo"/>
@@ -25,4 +31,4 @@
             <resource name="Magento_Customer::group"/>
         </resources>
     </integration>
-</integrations>
+</config>
