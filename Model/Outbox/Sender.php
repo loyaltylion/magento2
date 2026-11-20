@@ -88,7 +88,7 @@ class Sender
     private function sendRow(array $row, Connection $connection): string
     {
         if (!$connection->sendsChanges()) {
-            $this->outbox->hold($row, self::HOLD_SECONDS, 'This website is not connected to LoyaltyLion');
+            $this->outbox->hold($row, self::HOLD_SECONDS, 'Waiting for this website\'s Site ID and API key');
 
             return Outcome::HELD;
         }

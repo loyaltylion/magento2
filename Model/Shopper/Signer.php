@@ -18,7 +18,7 @@ class Signer
 
     /**
      * @param int|string|null $websiteId
-     * @return array|null null when the website has no SDK secret token to sign with
+     * @return array|null null when the website has nothing to sign with
      */
     public function packet(string $customerId, string $email, $websiteId): ?array
     {
@@ -27,7 +27,7 @@ class Signer
             return null;
         }
 
-        return self::sign($customerId, $email, date('c'), $connection->sdkToken);
+        return self::sign($customerId, $email, date('c'), $connection->signingKey);
     }
 
     /**
@@ -35,11 +35,11 @@ class Signer
      * LoyaltyLion's SDK documentation sets out. Signing the email stops a
      * packet being replayed with another customer's address beside it.
      */
-    public static function sign(string $customerId, string $email, string $date, string $sdkToken): array
+    public static function sign(string $customerId, string $email, string $date, string $signingKey): array
     {
         return [
             'customer' => ['id' => $customerId, 'email' => $email],
-            'auth' => ['date' => $date, 'token' => sha1($customerId . $date . $email . $sdkToken)],
+            'auth' => ['date' => $date, 'token' => sha1($customerId . $date . $email . $signingKey)],
         ];
     }
 }

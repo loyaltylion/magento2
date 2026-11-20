@@ -31,6 +31,12 @@ scope, set:
 
 The store's cron must be running (`bin/magento cron:run`), or nothing is sent.
 
+### Upgrading from 1.x
+
+Module 1.x connected a website with a token and secret. After upgrading, the storefront keeps working on those,
+and orders and customers are kept in the outbox, but nothing is sent until the website has its Site ID, API key
+and SDK secret token. The Magento admin shows a system message naming the websites that still need them.
+
 ## Looking after it
 
 - `bin/magento loyaltylion:outbox:send` sends what is waiting now and prints what is left:

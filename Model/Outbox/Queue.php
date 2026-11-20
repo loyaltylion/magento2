@@ -28,7 +28,7 @@ class Queue
         // This runs inside the shopper's or the admin's own save, which must
         // go through whatever happens here.
         try {
-            if ($entityId && $this->config->forWebsite($websiteId)->sendsChanges()) {
+            if ($entityId && $this->config->forWebsite($websiteId)->queuesChanges()) {
                 $this->outbox->add($kind, (int) $entityId, (int) $websiteId, $payload);
             }
         } catch (\Throwable $e) {
