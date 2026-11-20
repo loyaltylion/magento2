@@ -5,6 +5,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="loyaltylion_outbox_send" xsi:type="object">Loyaltylion\Core\Console\Command\SendOutboxCommand</item>
+                <item name="loyaltylion_report" xsi:type="object">Loyaltylion\Core\Console\Command\ReportCommand</item>
             </argument>
         </arguments>
     </type>

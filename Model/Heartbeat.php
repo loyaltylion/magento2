@@ -24,7 +24,8 @@ class Heartbeat
         private readonly Outbox $outbox,
         private readonly StoreManagerInterface $storeManager,
         private readonly ProductMetadataInterface $magento,
-        private readonly PackageInfo $packageInfo
+        private readonly PackageInfo $packageInfo,
+        private readonly Capabilities $capabilities
     ) {
     }
 
@@ -45,6 +46,7 @@ class Heartbeat
                 'module_version' => (string) $this->packageInfo->getVersion('Loyaltylion_Core'),
                 'magento_version' => (string) $this->magento->getVersion(),
                 'magento_edition' => (string) $this->magento->getEdition(),
+                'capabilities' => $this->capabilities->all(),
                 'outbox' => array_filter([
                     'waiting' => $outbox['waiting'],
                     'parked' => $outbox['parked'],
