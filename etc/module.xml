@@ -8,6 +8,7 @@
             <module name="Magento_Integration"/>
             <module name="Magento_Quote"/>
             <module name="Magento_SalesRule"/>
+            <module name="Magento_Newsletter"/>
         </sequence>
     </module>
 </config>

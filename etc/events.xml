@@ -7,6 +7,9 @@
     <event name="customer_save_after">
         <observer name="loyaltylion_queue_customer" instance="Loyaltylion\Core\Observer\QueueCustomer"/>
     </event>
+    <event name="newsletter_subscriber_save_after">
+        <observer name="loyaltylion_queue_newsletter_signup" instance="Loyaltylion\Core\Observer\QueueNewsletterSignup"/>
+    </event>
     <event name="customer_delete_after">
         <observer name="loyaltylion_queue_customer_deletion" instance="Loyaltylion\Core\Observer\QueueCustomerDeletion"/>
     </event>

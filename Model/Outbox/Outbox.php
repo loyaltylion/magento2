@@ -19,6 +19,7 @@ class Outbox
     public const CUSTOMER_REGISTERED = 'customer_registered';
     public const CUSTOMER_DELETED = 'customer_deleted';
     public const CART_SESSION_RELEASED = 'cart_session_released';
+    public const NEWSLETTER_SIGNUP = 'newsletter_signup';
 
     private const TABLE = 'loyaltylion_outbox';
     private const WAITING = 'waiting';

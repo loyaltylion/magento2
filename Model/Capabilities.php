@@ -24,11 +24,20 @@ class Capabilities
     /** Takes a website's connection settings from LoyaltyLion, so nobody pastes them in */
     public const CONNECTION_SETUP = 'connection_setup';
 
+    /** Tells LoyaltyLion when a customer subscribes to the newsletter */
+    public const NEWSLETTER_SIGNUP = 'newsletter_signup';
+
     /**
      * @return string[]
      */
     public function all(): array
     {
-        return [self::CONNECTION_SETUP, self::OUTBOX, self::SDK_CART, self::SEAMLESS_FREE_PRODUCT];
+        return [
+            self::CONNECTION_SETUP,
+            self::NEWSLETTER_SIGNUP,
+            self::OUTBOX,
+            self::SDK_CART,
+            self::SEAMLESS_FREE_PRODUCT,
+        ];
     }
 }

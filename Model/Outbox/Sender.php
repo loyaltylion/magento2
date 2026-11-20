@@ -157,6 +157,8 @@ class Sender
                         '/customers/' . $id . '/registration',
                         $this->customerState->of($this->customers->getById($id))
                     );
+                case Outbox::NEWSLETTER_SIGNUP:
+                    return $this->client->send($connection, 'POST', '/customers/' . $id . '/newsletter_signup');
                 case Outbox::CUSTOMER_DELETED:
                     return $this->client->send($connection, 'DELETE', '/customers/' . $id);
                 case Outbox::CART_SESSION_RELEASED:
