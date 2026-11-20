@@ -21,11 +21,14 @@ class Capabilities
     /** Sends order and customer changes from the outbox, retrying until taken */
     public const OUTBOX = 'outbox';
 
+    /** Takes a website's connection settings from LoyaltyLion, so nobody pastes them in */
+    public const CONNECTION_SETUP = 'connection_setup';
+
     /**
      * @return string[]
      */
     public function all(): array
     {
-        return [self::OUTBOX, self::SDK_CART, self::SEAMLESS_FREE_PRODUCT];
+        return [self::CONNECTION_SETUP, self::OUTBOX, self::SDK_CART, self::SEAMLESS_FREE_PRODUCT];
     }
 }

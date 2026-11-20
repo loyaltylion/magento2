@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/loyaltylion/websites/:websiteId/connection" method="PUT">
+        <service class="Loyaltylion\Core\Api\ConnectionManagementInterface" method="save"/>
+        <resources>
+            <resource ref="Loyaltylion_Core::config"/>
+        </resources>
+    </route>
+</routes>

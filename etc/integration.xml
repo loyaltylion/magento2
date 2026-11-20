@@ -27,6 +27,9 @@
             <resource name="Magento_Backend::stores"/>
             <resource name="Magento_Backend::stores_settings"/>
             <resource name="Magento_Backend::store"/>
+            <!-- Saving a website's LoyaltyLion settings when the store is connected -->
+            <resource name="Magento_Config::config"/>
+            <resource name="Loyaltylion_Core::config"/>
             <resource name="Magento_Customer::customer"/>
             <resource name="Magento_Customer::group"/>
         </resources>
