@@ -25,7 +25,9 @@ class Heartbeat
         private readonly StoreManagerInterface $storeManager,
         private readonly ProductMetadataInterface $magento,
         private readonly PackageInfo $packageInfo,
-        private readonly Capabilities $capabilities
+        private readonly Capabilities $capabilities,
+        private readonly Storefront $storefront,
+        private readonly IntegrationApproval $approval
     ) {
     }
 
@@ -47,6 +49,8 @@ class Heartbeat
                 'magento_version' => (string) $this->magento->getVersion(),
                 'magento_edition' => (string) $this->magento->getEdition(),
                 'capabilities' => $this->capabilities->all(),
+                'storefront' => $this->storefront->of($website),
+                'integration' => $this->approval->state(),
                 'outbox' => array_filter([
                     'waiting' => $outbox['waiting'],
                     'parked' => $outbox['parked'],
