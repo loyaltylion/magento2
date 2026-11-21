@@ -15,6 +15,9 @@ use Magento\Sales\Api\Data\OrderInterface;
  */
 class OrderState
 {
+    /** LoyaltyLion takes at most this many lines of one order. */
+    private const MOST_ITEMS = 500;
+
     public function __construct(private readonly FreeProduct $freeProduct)
     {
     }
@@ -41,11 +44,46 @@ class OrderState
             // are not in coupon_code.
             'reward_codes' => $this->freeProduct->claimsOnOrder($order, ClaimedFreeProducts::CODE) ?: null,
             'reward_sessions' => $this->freeProduct->claimsOnOrder($order, ClaimedFreeProducts::SESSION) ?: null,
+            'items' => $this->items($order) ?: null,
         ];
 
         // Magento's own API leaves a field out rather than sending null, and
         // LoyaltyLion reads this the same way.
         return array_filter($state, static fn ($value) => $value !== null);
+    }
+
+    /**
+     * The lines a shopper sees on the order. A configurable product is one
+     * line: the product they chose, with the variant they got as its child.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function items(OrderInterface $order): array
+    {
+        $items = [];
+        foreach ($order->getItems() as $item) {
+            // A child line repeats its parent, which carries the price.
+            if ($item->getParentItemId() || count($items) >= self::MOST_ITEMS) {
+                continue;
+            }
+
+            $children = $item->getChildrenItems() ?: [];
+            $variant = $item->getProductType() === 'configurable' && $children ? $children[0] : null;
+
+            $items[] = array_filter([
+                'item_id' => (int) $item->getItemId(),
+                'product_id' => (int) $item->getProductId(),
+                'variant_id' => $variant ? (int) $variant->getProductId() : null,
+                'sku' => (string) $item->getSku(),
+                'name' => (string) $item->getName(),
+                'qty_ordered' => (float) $item->getQtyOrdered(),
+                'base_price' => $this->amount($item->getBasePrice()) ?? '0',
+                'base_discount_amount' => $this->amount($item->getBaseDiscountAmount()),
+                'base_tax_amount' => $this->amount($item->getBaseTaxAmount()),
+            ], static fn ($value) => $value !== null);
+        }
+
+        return $items;
     }
 
     private function amount($value): ?string

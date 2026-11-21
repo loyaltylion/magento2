@@ -30,6 +30,9 @@ class Capabilities
     /** Has the customer attribute LoyaltyLion writes a member's tier to */
     public const CUSTOMER_TIER = 'customer_tier';
 
+    /** Sends each order's lines, so rules and modifiers for a product can apply */
+    public const ORDER_ITEMS = 'order_items';
+
     /**
      * @return string[]
      */
@@ -39,6 +42,7 @@ class Capabilities
             self::CONNECTION_SETUP,
             self::CUSTOMER_TIER,
             self::NEWSLETTER_SIGNUP,
+            self::ORDER_ITEMS,
             self::OUTBOX,
             self::SDK_CART,
             self::SEAMLESS_FREE_PRODUCT,
