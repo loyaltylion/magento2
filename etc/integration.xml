@@ -23,6 +23,7 @@
             <resource name="Magento_Catalog::catalog"/>
             <resource name="Magento_Catalog::catalog_inventory"/>
             <resource name="Magento_Catalog::products"/>
+            <resource name="Magento_Catalog::categories"/>
             <!-- Reading websites and customer groups, to connect each website to its LoyaltyLion site -->
             <resource name="Magento_Backend::stores"/>
             <resource name="Magento_Backend::stores_settings"/>
