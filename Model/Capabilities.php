@@ -33,6 +33,9 @@ class Capabilities
     /** Sends each order's lines, so rules and modifiers for a product can apply */
     public const ORDER_ITEMS = 'order_items';
 
+    /** Sends a customer's group with every change to them, a change of group included */
+    public const CUSTOMER_GROUP = 'customer_group';
+
     /**
      * @return string[]
      */
@@ -40,6 +43,7 @@ class Capabilities
     {
         return [
             self::CONNECTION_SETUP,
+            self::CUSTOMER_GROUP,
             self::CUSTOMER_TIER,
             self::NEWSLETTER_SIGNUP,
             self::ORDER_ITEMS,

@@ -20,6 +20,8 @@ class CustomerState
             'lastname' => $customer->getLastname() ?: null,
             'created_at' => $customer->getCreatedAt() ? Timestamp::utc($customer->getCreatedAt()) : null,
             'dob' => $customer->getDob() ?: null,
+            'website_id' => $customer->getWebsiteId() !== null ? (int) $customer->getWebsiteId() : null,
+            'group_id' => $customer->getGroupId() !== null ? (int) $customer->getGroupId() : null,
         ];
 
         return array_filter($state, static fn ($value) => $value !== null);
