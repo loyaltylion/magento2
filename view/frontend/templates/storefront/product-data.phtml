@@ -1,0 +1,11 @@
+<?php
+/** @var \Loyaltylion\Core\Block\ProductData $block */
+$data = $block->getProductData();
+if ($data === null) {
+    return;
+}
+?>
+<script type="application/json" data-lion-product><?= /* @noEscape */ json_encode(
+    $data,
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR
+) ?></script>
