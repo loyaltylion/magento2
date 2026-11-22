@@ -33,11 +33,11 @@ class AddCheckoutRedemption implements LayoutProcessorInterface
             return $jsLayout;
         }
 
-        $jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']
-            ['payment']['children']['afterMethods']['children']['loyaltylion-checkout-redemption'] = [
-                'component' => 'Loyaltylion_Core/js/view/checkout-redemption',
-                'sortOrder' => 0,
-            ];
+        $billing = &$jsLayout['components']['checkout']['children']['steps']['children']['billing-step'];
+        $billing['children']['payment']['children']['afterMethods']['children']['loyaltylion-checkout-redemption'] = [
+            'component' => 'Loyaltylion_Core/js/view/checkout-redemption',
+            'sortOrder' => 0,
+        ];
 
         return $jsLayout;
     }

@@ -31,7 +31,7 @@ class Storefront
     public function of(WebsiteInterface $website): array
     {
         $codes = $this->themeCodes($website);
-        $theme = self::family($codes);
+        $theme = self::themeFamily($codes);
 
         return [
             'theme' => $theme,
@@ -46,7 +46,7 @@ class Storefront
      *
      * @param string[] $codes
      */
-    public static function family(array $codes): string
+    public static function themeFamily(array $codes): string
     {
         foreach ($codes as $code) {
             if (str_starts_with($code, 'Hyva/')) {

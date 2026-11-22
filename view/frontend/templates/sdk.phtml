@@ -34,7 +34,6 @@ ob_start();
         waiting.forEach(function (run) { run(); });
     }
 <?php if ($connection->signsShoppers()): ?>
-
     // The SDK settles what a shopper may do, and what belongs in their cart,
     // as it starts. So it starts once the store has said who the shopper is,
     // with them attached, and not as a guest who signs in a moment later.
@@ -73,11 +72,9 @@ ob_start();
         });
     }
 <?php else: ?>
-
     start(null);
 <?php endif; ?>
 <?php if ($connection->addsFreeProductsToCart): ?>
-
     // free-product.js is deferred, so it has run by DOMContentLoaded, and its
     // hooks can only be registered on an SDK that has been started.
     document.addEventListener('DOMContentLoaded', function () {
@@ -103,7 +100,7 @@ if ($connection->addsFreeProductsToCart): ?>
 // Hyvä allows an inline script by registering it; elsewhere Magento's renderer does it.
 if (isset($hyvaCsp)): ?>
 <script><?= /* @noEscape */ $script ?></script>
-<?php $hyvaCsp->registerInlineScript(); ?>
+    <?php $hyvaCsp->registerInlineScript(); ?>
 <?php else: ?>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>
 <?php endif; ?>

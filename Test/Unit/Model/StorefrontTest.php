@@ -11,17 +11,17 @@ class StorefrontTest extends TestCase
 {
     public function testAMerchantsOwnThemeBuiltOnHyvaIsHyva(): void
     {
-        $this->assertSame('hyva', Storefront::family(['Acme/shop', 'Hyva/default', 'Hyva/reset']));
+        $this->assertSame('hyva', Storefront::themeFamily(['Acme/shop', 'Hyva/default', 'Hyva/reset']));
     }
 
     public function testAMerchantsOwnThemeBuiltOnLumaIsLuma(): void
     {
-        $this->assertSame('luma', Storefront::family(['Acme/shop', 'Magento/luma', 'Magento/blank']));
+        $this->assertSame('luma', Storefront::themeFamily(['Acme/shop', 'Magento/luma', 'Magento/blank']));
     }
 
     public function testAThemeBuiltOnNeitherIsReportedAsOther(): void
     {
-        $this->assertSame('other', Storefront::family(['Acme/headless']));
-        $this->assertSame('other', Storefront::family([]));
+        $this->assertSame('other', Storefront::themeFamily(['Acme/headless']));
+        $this->assertSame('other', Storefront::themeFamily([]));
     }
 }
