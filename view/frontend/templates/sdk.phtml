@@ -28,6 +28,9 @@ ob_start();
         window.loyaltylion.init(
             packet ? { token: token, customer: packet.customer, auth: packet.auth } : { token: token }
         );
+<?php if ($block->getData('order_confirmation_page')): ?>
+        window.loyaltylion.configure({ orderConfirmationPage: true });
+<?php endif; ?>
         waiting.forEach(function (run) { run(); });
     }
 <?php if ($connection->signsShoppers()): ?>
