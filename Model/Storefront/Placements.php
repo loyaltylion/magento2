@@ -19,7 +19,6 @@ class Placements
     public const MENU_LINK = 'menu_link';
     public const ACCOUNT_PAGE = 'account_page';
     public const PRODUCT_POINTS = 'product_points';
-    public const CART_POINTS = 'cart_points';
     public const CHECKOUT_REDEMPTION = 'checkout_redemption';
 
     private const PREFIX = 'loyaltylion/storefront/';

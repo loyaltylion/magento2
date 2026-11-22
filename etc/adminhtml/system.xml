@@ -87,12 +87,6 @@
                     <comment>Tells shoppers how many points buying the product earns, under its price.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="cart_points" translate="label comment" type="select" sortOrder="70"
-                       showInDefault="0" showInWebsite="1" showInStore="0">
-                    <label>Show points in the cart</label>
-                    <comment>Tells shoppers how many points their order earns, in the cart and the mini cart.</comment>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
                 <field id="checkout_redemption" translate="label comment" type="select" sortOrder="80"
                        showInDefault="0" showInWebsite="1" showInStore="0">
                     <label>Let shoppers redeem points in the cart and at checkout</label>
