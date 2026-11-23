@@ -37,6 +37,8 @@ class Config
             $sdkToken ?? $oldSecret,
             (string) $this->value('api_host', $websiteId),
             (string) $this->value('sdk_host', $websiteId),
+            (string) $this->value('sdk_static_host', $websiteId),
+            (string) $this->value('platform_host', $websiteId),
             $this->scopeConfig->isSetFlag(self::FREE_PRODUCT_CART, ScopeInterface::SCOPE_WEBSITE, $websiteId),
             $oldToken !== null && $oldSecret !== null,
             $sdkToken !== null

@@ -3,7 +3,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <!-- Magento's checkout allows scripts only from the hosts its Content Security Policy lists. The SDK is
-             allowed there, and so shown, only while redeeming points at checkout is on. -->
+             allowed there, and so shown, only while LoyaltyLion is shown at checkout. -->
         <referenceBlock name="loyaltylion.sdk">
             <arguments>
                 <argument name="needs_placement" xsi:type="string">checkout_redemption</argument>

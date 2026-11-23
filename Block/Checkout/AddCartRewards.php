@@ -8,11 +8,11 @@ use Loyaltylion\Core\Model\Storefront\Placements;
 use Magento\Checkout\Block\Checkout\LayoutProcessorInterface;
 
 /**
- * Adds the element LoyaltyLion's SDK draws "redeem points at checkout" into,
- * beside the discount code form in the payment step. A checkout that has no
- * such step (a one-step checkout add-on) is left as it is.
+ * Adds the element LoyaltyLion's SDK draws its Cart rewards block into, beside
+ * the discount code form in the payment step. A checkout that has no such step
+ * (a one-step checkout add-on) is left as it is.
  */
-class AddCheckoutRedemption implements LayoutProcessorInterface
+class AddCartRewards implements LayoutProcessorInterface
 {
     public function __construct(private readonly Placements $placements)
     {
@@ -24,7 +24,7 @@ class AddCheckoutRedemption implements LayoutProcessorInterface
      */
     public function process($jsLayout)
     {
-        if (!$this->placements->isOn(Placements::CHECKOUT_REDEMPTION)) {
+        if (!$this->placements->isOn(Placements::CHECKOUT_CART_REWARDS)) {
             return $jsLayout;
         }
 
@@ -34,8 +34,8 @@ class AddCheckoutRedemption implements LayoutProcessorInterface
         }
 
         $billing = &$jsLayout['components']['checkout']['children']['steps']['children']['billing-step'];
-        $billing['children']['payment']['children']['afterMethods']['children']['loyaltylion-checkout-redemption'] = [
-            'component' => 'Loyaltylion_Core/js/view/checkout-redemption',
+        $billing['children']['payment']['children']['afterMethods']['children']['loyaltylion-cart-rewards'] = [
+            'component' => 'Loyaltylion_Core/js/view/cart-rewards',
             'sortOrder' => 0,
         ];
 

@@ -18,6 +18,8 @@ class ConnectionTest extends TestCase
             $settings['signingKey'] ?? null,
             'api.example.com',
             'sdk.example.com',
+            'sdk-static.example.com',
+            'platform.example.com',
             false,
             $settings['connectedByOldModule'] ?? false,
             $settings['hasSdkToken'] ?? false

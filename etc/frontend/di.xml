@@ -14,7 +14,7 @@
     <type name="Magento\Checkout\Block\Onepage">
         <arguments>
             <argument name="layoutProcessors" xsi:type="array">
-                <item name="loyaltylionCheckoutRedemption" xsi:type="object">Loyaltylion\Core\Block\Checkout\AddCheckoutRedemption</item>
+                <item name="loyaltylionCartRewards" xsi:type="object">Loyaltylion\Core\Block\Checkout\AddCartRewards</item>
             </argument>
         </arguments>
     </type>

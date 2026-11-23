@@ -43,6 +43,12 @@
                 <field id="sdk_host" type="text" sortOrder="110" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>SDK host</label>
                 </field>
+                <field id="sdk_static_host" type="text" sortOrder="120" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>SDK static host</label>
+                </field>
+                <field id="platform_host" type="text" sortOrder="130" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>Platform host</label>
+                </field>
             </group>
             <group id="storefront" translate="label" type="text" sortOrder="20"
                    showInDefault="0" showInWebsite="1" showInStore="0">
@@ -83,8 +89,8 @@
                 </field>
                 <field id="checkout_redemption" translate="label comment" type="select" sortOrder="80"
                        showInDefault="0" showInWebsite="1" showInStore="0">
-                    <label>Let shoppers redeem points in the cart and at checkout</label>
-                    <comment>Shows signed-in members a way to spend points on a discount. Needs the Redeem at checkout reward in LoyaltyLion.</comment>
+                    <label>Show LoyaltyLion on the checkout's payment step</label>
+                    <comment>Members can redeem points and apply their rewards there. Set up the block and what it shows in LoyaltyLion. Works on Magento's own checkout, not on checkout add-ons.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>

@@ -12,6 +12,9 @@ Magento 2.4.4 and later, PHP 8.1 and later.
   it. It works on Luma and on Hyvä. A headless storefront reads the same signed proof from GraphQL
   (`customer { loyaltylion_auth { customer_id email date token } }`).
 - **Puts a claimed free product in the cart** at no charge, if the website turns that on.
+- **Makes room for LoyaltyLion on the checkout's payment step**, where members can redeem points and apply rewards,
+  if the website turns that on ("Show LoyaltyLion on the checkout's payment step", on by default). The SDK draws
+  the block there, set up in LoyaltyLion. On the cart page the block places itself, so the module adds nothing.
 - **Lets LoyaltyLion create reward codes in the store**, through the "LoyaltyLion" integration it registers
   (System > Integrations).
 
@@ -46,7 +49,8 @@ and SDK secret token. The Magento admin shows a system message naming the websit
   key is refused. A row is **parked** when LoyaltyLion refuses that order or customer itself; `last_error` says
   why, and it is sent again if the order or customer changes.
 - To point a store at another LoyaltyLion environment:
-  `bin/magento config:set loyaltylion/connection/api_host <host>` and `loyaltylion/connection/sdk_host <host>`.
+  `bin/magento config:set loyaltylion/connection/api_host <host>`, `loyaltylion/connection/sdk_host <host>`,
+  `loyaltylion/connection/sdk_static_host <host>` and `loyaltylion/connection/platform_host <host>`.
 
 ## Working on the module
 

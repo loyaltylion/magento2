@@ -21,6 +21,8 @@ class Connection
         public readonly ?string $signingKey,
         public readonly string $apiHost,
         public readonly string $sdkHost,
+        public readonly string $sdkStaticHost,
+        public readonly string $platformHost,
         public readonly bool $addsFreeProductsToCart = false,
         public readonly bool $connectedByOldModule = false,
         public readonly bool $hasSdkToken = false
