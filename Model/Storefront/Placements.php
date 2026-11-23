@@ -20,6 +20,7 @@ class Placements
     public const ACCOUNT_PAGE = 'account_page';
     // The config path keeps its older name, because renaming it would lose the choice a website already saved.
     public const CHECKOUT_CART_REWARDS = 'checkout_redemption';
+    public const ORDER_CONFIRMATION = 'order_confirmation';
 
     private const PREFIX = 'loyaltylion/storefront/';
     private const DEFAULT_URL_KEY = 'loyalty';

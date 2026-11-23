@@ -2,7 +2,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- The SDK shows its post-purchase prompts on the page that confirms an order. -->
+        <!-- The SDK holds its notifications back on the page that confirms an order. -->
         <referenceBlock name="loyaltylion.sdk">
             <arguments>
                 <argument name="order_confirmation_page" xsi:type="boolean">true</argument>

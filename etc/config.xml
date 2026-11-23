@@ -16,6 +16,7 @@
                 <menu_link>0</menu_link>
                 <account_page>1</account_page>
                 <checkout_redemption>1</checkout_redemption>
+                <order_confirmation>1</order_confirmation>
             </storefront>
         </loyaltylion>
     </default>

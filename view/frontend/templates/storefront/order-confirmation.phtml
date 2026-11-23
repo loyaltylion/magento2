@@ -1,0 +1,6 @@
+<?php
+/** @var \Loyaltylion\Core\Block\OrderConfirmation $block */
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+<div class="loyaltylion-order-confirmation" style="margin: 24px 0;"
+     data-lion-points-earned="<?= $escaper->escapeHtmlAttr($block->getOrderId()) ?>"></div>

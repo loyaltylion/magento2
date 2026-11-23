@@ -93,6 +93,12 @@
                     <comment>Members can redeem points and apply their rewards there. Set up the block and what it shows in LoyaltyLion. Works on Magento's own checkout, not on checkout add-ons.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="order_confirmation" translate="label comment" type="select" sortOrder="90"
+                       showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Show LoyaltyLion on the order confirmation page</label>
+                    <comment>Members see the points their order earned and their referral link. Guests are invited to join.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>
