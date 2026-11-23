@@ -1,6 +1,23 @@
 <?php
-/** @var \Loyaltylion\Core\Block\OrderConfirmation $block */
-/** @var \Magento\Framework\Escaper $escaper */
+/**
+ * @var \Loyaltylion\Core\Block\OrderConfirmation $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+// The order goes to LoyaltyLion now, not at the next scheduled run, so the
+// block can say what it earned while the shopper is still on the page.
+$script = sprintf(
+    'fetch("%s", {method: "POST", credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})'
+    . '.catch(function () {});',
+    $escaper->escapeJs($block->getUrl('loyaltylion/order/send'))
+);
 ?>
 <div class="loyaltylion-order-confirmation" style="margin: 24px 0;"
      data-lion-points-earned="<?= $escaper->escapeHtmlAttr($block->getOrderId()) ?>"></div>
+<?php // Hyvä allows an inline script by registering it; elsewhere Magento's renderer does it.
+if (isset($hyvaCsp)): ?>
+<script><?= /* @noEscape */ $script ?></script>
+    <?php $hyvaCsp->registerInlineScript(); ?>
+<?php else: ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>
+<?php endif; ?>

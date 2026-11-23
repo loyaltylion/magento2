@@ -85,6 +85,35 @@ class Sender
         return $counts;
     }
 
+    /**
+     * Sends one order now if it is waiting, so the page that confirms it can
+     * say what it earned without waiting for the next scheduled run.
+     *
+     * @return string|null the Outcome, or null when the order isn't waiting or a run is already sending
+     */
+    public function sendOrder(int $orderId): ?string
+    {
+        if (!$this->lock->lock(self::LOCK, 0)) {
+            return null;
+        }
+
+        try {
+            $row = $this->outbox->dueOrder($orderId);
+            if ($row === null) {
+                return null;
+            }
+
+            try {
+                return $this->sendRow($row, $this->config->forWebsite((int) $row['website_id']));
+            } catch (\Throwable $e) {
+                // The scheduled run meets the same failure and records it.
+                return Outcome::RETRY;
+            }
+        } finally {
+            $this->lock->unlock(self::LOCK);
+        }
+    }
+
     private function sendRow(array $row, Connection $connection): string
     {
         if (!$connection->sendsChanges()) {

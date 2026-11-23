@@ -70,6 +70,21 @@ class Outbox
     }
 
     /**
+     * @return array|null the order's row if it is ready to send
+     */
+    public function dueOrder(int $orderId): ?array
+    {
+        $select = $this->db()->select()
+            ->from($this->table())
+            ->where('kind = ?', self::ORDER)
+            ->where('entity_id = ?', $orderId)
+            ->where('state IN (?)', [self::WAITING, self::HELD])
+            ->where('available_at <= CURRENT_TIMESTAMP');
+
+        return $this->db()->fetchRow($select) ?: null;
+    }
+
+    /**
      * Forgets a row once its state is with LoyaltyLion, unless the entity
      * changed again while it was being sent.
      */
