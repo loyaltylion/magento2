@@ -7,11 +7,15 @@ Magento 2.4.4 and later, PHP 8.1 and later.
 
 - **Tells LoyaltyLion about orders and customers.** A change to an order or a customer is noted in the
   `loyaltylion_outbox` table in the same save. A cron job each minute reads the order or customer as it is then and
-  sends it to LoyaltyLion, and retries until it is accepted. Nothing a shopper does waits on LoyaltyLion.
+  sends it to LoyaltyLion, and retries until it is accepted. An order goes with its lines, its amounts in the base
+  currency and the IP address it was placed from. Adding a free product to the cart, and placing an order that holds
+  one, wait on LoyaltyLion to check it, and the order confirmation page sends its order straight away; each of these
+  calls gives up after three seconds.
 - **Shows the loyalty program on the storefront.** Every page loads LoyaltyLion's SDK and signs the shopper in to
   it. It works on Luma and on Hyvä. A headless storefront reads the same signed proof from GraphQL
   (`customer { loyaltylion_auth { customer_id email date token } }`).
-- **Puts a claimed free product in the cart** at no charge, if the website turns that on.
+- **Puts a claimed free product in the cart** at no charge, if the website turns that on. The SDK reads the cart
+  wherever it is shown, for the Cart rewards block and points estimates.
 - **Makes room for LoyaltyLion on the checkout's payment step**, where members can redeem points and apply rewards,
   if the website turns that on ("Show LoyaltyLion on the checkout's payment step", on by default). The SDK draws
   the block there, set up in LoyaltyLion. On the cart page the block places itself, so the module adds nothing.
@@ -38,10 +42,13 @@ The store's cron must be running (`bin/magento cron:run`), or nothing is sent.
 
 Module 1.x connected a website with a token and secret. After upgrading, the storefront keeps working on those,
 and orders and customers are kept in the outbox, but nothing is sent until the website has its Site ID, API key
-and SDK secret token. The Magento admin shows a system message naming the websites that still need them.
+and SDK secret token. The Magento admin shows a system message naming the websites that still need them. The
+upgrade encrypts the 1.x secret, and saving a website's new settings removes it.
 
 ## Looking after it
 
+- Removing the module with `bin/magento module:uninstall Loyaltylion_Core` removes its data too: the outbox, its
+  settings, the `loyaltylion_tier` customer attribute and the LoyaltyLion integration.
 - `bin/magento loyaltylion:outbox:send` sends what is waiting now and prints what is left:
   `waiting`, `parked` and `oldest_waiting_at`.
 - A row is **waiting** until LoyaltyLion accepts it, and is retried after one minute, then two, four, and so on up

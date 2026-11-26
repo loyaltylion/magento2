@@ -8,13 +8,14 @@ use Magento\Customer\Model\Customer;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
+use Magento\Framework\Setup\Patch\PatchRevertableInterface;
 
 /**
  * Adds the `loyaltylion_tier` customer attribute, which LoyaltyLion keeps set
  * to the member's tier name through the REST API. Magento has no REST call
  * that creates a customer attribute, so the module has to.
  */
-class AddLoyaltyTierCustomerAttribute implements DataPatchInterface
+class AddLoyaltyTierCustomerAttribute implements DataPatchInterface, PatchRevertableInterface
 {
     public const ATTRIBUTE_CODE = 'loyaltylion_tier';
 
@@ -80,6 +81,16 @@ class AddLoyaltyTierCustomerAttribute implements DataPatchInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Removes the attribute when the module is uninstalled. Each customer's
+     * value goes with it.
+     */
+    public function revert(): void
+    {
+        $this->customerSetupFactory->create(['setup' => $this->moduleDataSetup])
+            ->removeAttribute(Customer::ENTITY, self::ATTRIBUTE_CODE);
     }
 
     public static function getDependencies(): array

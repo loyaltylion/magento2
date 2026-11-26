@@ -11,6 +11,7 @@ use Loyaltylion\Core\Model\Connection;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Lock\LockManagerInterface;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
@@ -37,7 +38,8 @@ class Sender
         private readonly OrderState $orderState,
         private readonly CustomerState $customerState,
         private readonly LockManagerInterface $lock,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly DateTime $clock
     ) {
     }
 
@@ -58,7 +60,7 @@ class Sender
         }
 
         try {
-            $stopAt = microtime(true) + self::RUN_SECONDS;
+            $stopAt = $this->clock->gmtTimestamp() + self::RUN_SECONDS;
             $unreachable = 0;
 
             foreach ($this->outbox->dueWebsites() as $websiteId) {
@@ -72,7 +74,7 @@ class Sender
                 foreach ($this->outbox->due($websiteId, $limit) as $row) {
                     // The job shares the store's cron with everything else
                     // scheduled, so a run ends on time and the next continues.
-                    if (microtime(true) >= $stopAt) {
+                    if ($this->clock->gmtTimestamp() >= $stopAt) {
                         break 2;
                     }
 

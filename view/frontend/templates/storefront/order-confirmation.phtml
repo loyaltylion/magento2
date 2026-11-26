@@ -5,14 +5,17 @@
  * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
  */
 // The order goes to LoyaltyLion now, not at the next scheduled run, so the
-// block can say what it earned while the shopper is still on the page.
+// block can say what it earned while the shopper is still on the page. The
+// margin is set from the script because a strict Content Security Policy
+// refuses a style attribute.
 $script = sprintf(
-    'fetch("%s", {method: "POST", credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})'
+    'document.querySelector(".loyaltylion-order-confirmation").style.margin = "24px 0";'
+    . 'fetch("%s", {method: "POST", credentials: "same-origin", headers: {"X-Requested-With": "XMLHttpRequest"}})'
     . '.catch(function () {});',
     $escaper->escapeJs($block->getUrl('loyaltylion/order/send'))
 );
 ?>
-<div class="loyaltylion-order-confirmation" style="margin: 24px 0;"
+<div class="loyaltylion-order-confirmation"
      data-lion-points-earned="<?= $escaper->escapeHtmlAttr($block->getOrderId()) ?>"></div>
 <?php // Hyvä allows an inline script by registering it; elsewhere Magento's renderer does it.
 if (isset($hyvaCsp)): ?>

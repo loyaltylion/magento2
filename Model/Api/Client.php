@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Loyaltylion\Core\Model\Api;
 
 use GuzzleHttp\ClientFactory;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Loyaltylion\Core\Model\Connection;
 use Magento\Framework\App\ProductMetadataInterface;
@@ -16,6 +17,9 @@ use Magento\Framework\Module\PackageInfo;
 class Client
 {
     private const TIMEOUT_SECONDS = 10;
+
+    /** One for every call, so a run of sends reuses its connection to LoyaltyLion. */
+    private ?ClientInterface $http = null;
 
     public function __construct(
         private readonly ClientFactory $clientFactory,
@@ -49,7 +53,8 @@ class Client
         }
 
         try {
-            $response = $this->clientFactory->create()->request(
+            $this->http ??= $this->clientFactory->create();
+            $response = $this->http->request(
                 $method,
                 sprintf('https://%s/v2/magento/sites/%d%s', $connection->apiHost, $connection->siteId, $path),
                 $options

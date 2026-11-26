@@ -7,6 +7,7 @@ namespace Loyaltylion\Core\Model\Csp;
 use Loyaltylion\Core\Model\Config;
 use Magento\Csp\Api\PolicyCollectorInterface;
 use Magento\Csp\Model\Policy\FetchPolicy;
+use Psr\Log\LoggerInterface;
 
 /**
  * Lets LoyaltyLion's SDK load on pages with a strict Content Security Policy.
@@ -16,8 +17,10 @@ use Magento\Csp\Model\Policy\FetchPolicy;
  */
 class AllowSdkAtCheckout implements PolicyCollectorInterface
 {
-    public function __construct(private readonly Config $config)
-    {
+    public function __construct(
+        private readonly Config $config,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function collect(array $defaultPolicies = []): array
@@ -44,6 +47,8 @@ class AllowSdkAtCheckout implements PolicyCollectorInterface
             }
         } catch (\Throwable $e) {
             // A page must be served whatever happens here; without the policy the SDK is only refused.
+            $this->logger->warning('[LoyaltyLion] The SDK was not allowed by the page\'s policy: ' . $e->getMessage());
+
             return $defaultPolicies;
         }
 

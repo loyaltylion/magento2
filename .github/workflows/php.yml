@@ -8,19 +8,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        # The PHP versions Magento 2.4.4 to 2.4.8 run on
+        php-version: ["8.1", "8.2", "8.3", "8.4"]
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: ${{ matrix.php-version }}
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - name: Validate composer.json
+        run: composer validate --no-check-lock
 
+      # Resolved for each PHP version rather than installed from composer.lock,
+      # which pins one PHP version's packages.
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress
         env:
           COMPOSER_AUTH: ${{ secrets.MAGENTO_MARKETPLACE_AUTH }}
 

@@ -73,9 +73,10 @@
                         <field id="loyalty_page">1</field>
                     </depends>
                 </field>
-                <field id="menu_link" translate="label" type="select" sortOrder="40"
+                <field id="menu_link" translate="label comment" type="select" sortOrder="40"
                        showInDefault="0" showInWebsite="1" showInStore="0">
                     <label>Link the loyalty page from the main menu</label>
+                    <comment>Adds Rewards after the categories in the main menu of Luma, Hyvä and themes built on them. A theme that builds its own menu needs the link added there.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="loyalty_page">1</field>
