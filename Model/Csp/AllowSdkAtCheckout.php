@@ -5,31 +5,29 @@ declare(strict_types=1);
 namespace Loyaltylion\Core\Model\Csp;
 
 use Loyaltylion\Core\Model\Config;
-use Loyaltylion\Core\Model\Storefront\Placements;
 use Magento\Csp\Api\PolicyCollectorInterface;
 use Magento\Csp\Model\Policy\FetchPolicy;
 
 /**
- * Lets LoyaltyLion's SDK load on pages with a strict Content Security Policy,
- * which Magento 2.4.7 and later apply to the checkout. Only while LoyaltyLion
- * is shown at checkout, the one thing that needs the SDK there.
+ * Lets LoyaltyLion's SDK load on pages with a strict Content Security Policy.
+ * Magento 2.4.7 and later apply one to the checkout, and a store can apply one
+ * to every page, so the allowance follows the SDK: wherever the website shows
+ * it, whichever placements are on.
  */
 class AllowSdkAtCheckout implements PolicyCollectorInterface
 {
-    public function __construct(
-        private readonly Config $config,
-        private readonly Placements $placements
-    ) {
+    public function __construct(private readonly Config $config)
+    {
     }
 
     public function collect(array $defaultPolicies = []): array
     {
         try {
-            if (!$this->placements->isOn(Placements::CHECKOUT_CART_REWARDS)) {
+            $connection = $this->config->forWebsite();
+            if (!$connection->showsSdk()) {
                 return $defaultPolicies;
             }
 
-            $connection = $this->config->forWebsite();
             $everything = ['script-src', 'connect-src', 'style-src', 'img-src', 'font-src'];
             $allowed = [
                 [$connection->sdkHost, $everything],
