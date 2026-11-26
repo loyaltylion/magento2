@@ -12,7 +12,9 @@ use Magento\Framework\Event\ObserverInterface;
 
 /**
  * Tells LoyaltyLion when a seamless free product leaves the cart, so the
- * shopper gets their points back without waiting for the claim to expire.
+ * shopper gets their points back without waiting for the claim to expire. A
+ * cart Magento removes as it expires takes its lines with it unannounced, and
+ * those claims come back when they expire.
  */
 class ReleaseRemovedRewardLine implements ObserverInterface
 {
@@ -24,7 +26,7 @@ class ReleaseRemovedRewardLine implements ObserverInterface
 
     public function execute(Observer $observer): void
     {
-        $item = $observer->getEvent()->getQuoteItem();
+        $item = $observer->getEvent()->getData('item');
         $session = $this->freeProduct->sessionOf($item);
         $quote = $item->getQuote();
 

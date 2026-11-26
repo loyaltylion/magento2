@@ -48,7 +48,7 @@ class Heartbeat
                 'module_version' => (string) $this->packageInfo->getVersion('Loyaltylion_Core'),
                 'magento_version' => (string) $this->magento->getVersion(),
                 'magento_edition' => (string) $this->magento->getEdition(),
-                'capabilities' => $this->capabilities->all(),
+                'capabilities' => $this->capabilities->forWebsite($connection),
                 'storefront' => $this->storefront->of($website),
                 'integration' => $this->approval->state(),
                 'outbox' => array_filter([

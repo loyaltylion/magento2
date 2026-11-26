@@ -14,8 +14,6 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\SalesRule\Model\CouponFactory;
-use Psr\Log\LoggerInterface;
 
 /**
  * A claimed free product as a line in the shopper's cart at no charge.
@@ -38,9 +36,8 @@ class FreeProduct
         private readonly ClaimedFreeProducts $claims,
         private readonly ProductRepositoryInterface $products,
         private readonly CartRepositoryInterface $quotes,
-        private readonly CouponFactory $couponFactory,
-        private readonly Json $serializer,
-        private readonly LoggerInterface $logger
+        private readonly RewardCoupon $rewardCoupon,
+        private readonly Json $serializer
     ) {
     }
 
@@ -116,8 +113,7 @@ class FreeProduct
 
         $this->makeFree($item);
         $this->releaseCoupon($quote, $claim);
-        $quote->collectTotals();
-        $this->quotes->save($quote);
+        $this->saveChangedLines($quote);
 
         return ['added' => true, 'reason' => null];
     }
@@ -185,8 +181,7 @@ class FreeProduct
         }
 
         if ($removed) {
-            $quote->collectTotals();
-            $this->quotes->save($quote);
+            $this->saveChangedLines($quote);
         }
 
         return $removed;
@@ -210,8 +205,7 @@ class FreeProduct
         }
 
         if ($removed) {
-            $quote->collectTotals();
-            $this->quotes->save($quote);
+            $this->saveChangedLines($quote);
         }
     }
 
@@ -245,22 +239,12 @@ class FreeProduct
 
     /**
      * Removes the store's coupon for each code reward an order used as a free
-     * line. LoyaltyLion also created the claim's code as a coupon, for stores
-     * that don't add the product to the cart, and that coupon is still unused.
+     * line, so the code can't also be used as a coupon.
      */
     public function retireCoupons(OrderInterface $order): void
     {
         foreach ($this->claimsOnOrder($order, ClaimedFreeProducts::CODE) as $code) {
-            try {
-                $coupon = $this->couponFactory->create()->loadByCode($code);
-                if ($coupon->getId()) {
-                    $coupon->delete();
-                }
-            } catch (\Exception $e) {
-                $this->logger->error(
-                    '[LoyaltyLion] Could not remove the coupon of a used free product: ' . $e->getMessage()
-                );
-            }
+            $this->rewardCoupon->retire($code);
         }
     }
 
@@ -310,20 +294,13 @@ class FreeProduct
     }
 
     /**
-     * Whether a code reward's code has already been on an order here.
-     * LoyaltyLion creates each code as a coupon in the store, and
-     * `retireCoupons` deletes it when an order with its free line is placed,
-     * which is sooner than LoyaltyLion hears of that order. A reward line
-     * never goes through the coupon, so Magento's own limit on a coupon's
-     * uses can't stop a second order.
+     * Whether a code reward's code has already been on an order here, as a
+     * coupon or as a free line. The store knows that sooner than LoyaltyLion,
+     * which hears of an order only once the outbox sends it.
      */
     private function codeIsSpent(string $kind, string $id): bool
     {
-        if ($kind !== ClaimedFreeProducts::CODE) {
-            return false;
-        }
-
-        return !$this->couponFactory->create()->loadByCode($id)->getId();
+        return $kind === ClaimedFreeProducts::CODE && $this->rewardCoupon->isSpent($id);
     }
 
     private function claimOf(Item $item): ?string
@@ -348,8 +325,18 @@ class FreeProduct
     {
         $item->setCustomPrice(0);
         $item->setOriginalCustomPrice(0);
-        // Without this Magento recalculates the price from the catalog.
-        $item->getProduct()->setIsSuperMode(true);
+    }
+
+    /**
+     * Saves a cart whose lines changed, with its shipping rates collected again
+     * as Magento's own cart does, since a rate can depend on the lines' weight
+     * or number.
+     */
+    private function saveChangedLines(Quote $quote): void
+    {
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->collectTotals();
+        $this->quotes->save($quote);
     }
 
     private function releaseCoupon(Quote $quote, string $claim): void

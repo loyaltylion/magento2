@@ -37,6 +37,24 @@ class Capabilities
     public const CUSTOMER_GROUP = 'customer_group';
 
     /**
+     * What a website reports: a free product is offered only where the
+     * website puts it in the cart, which its merchant turns on.
+     *
+     * @param Connection $connection
+     * @return string[]
+     */
+    public function forWebsite(Connection $connection): array
+    {
+        return array_values(array_filter(
+            $this->all(),
+            static fn (string $capability) => $capability !== self::SEAMLESS_FREE_PRODUCT
+                || $connection->addsFreeProductsToCart
+        ));
+    }
+
+    /**
+     * Everything this version of the module can do on a website set up for it.
+     *
      * @return string[]
      */
     public function all(): array

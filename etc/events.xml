@@ -16,7 +16,8 @@
     <event name="sales_quote_collect_totals_before">
         <observer name="loyaltylion_hold_reward_lines" instance="Loyaltylion\Core\Observer\HoldRewardLines"/>
     </event>
-    <event name="sales_quote_remove_item">
+    <!-- Not sales_quote_remove_item, which emptying the cart doesn't dispatch. -->
+    <event name="sales_quote_item_delete_after">
         <observer name="loyaltylion_release_removed_reward_line" instance="Loyaltylion\Core\Observer\ReleaseRemovedRewardLine"/>
     </event>
     <event name="sales_model_service_quote_submit_before">
