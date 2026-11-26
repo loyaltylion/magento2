@@ -70,6 +70,10 @@ class FreeProduct
             return ['added' => true, 'reason' => null];
         }
 
+        if ($this->codeIsSpent($kind, $id)) {
+            return $this->refused('used');
+        }
+
         $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $customerId, $kind, $id);
         if ($answer === null) {
             return $this->refused('unreachable');
@@ -165,6 +169,11 @@ class FreeProduct
                 continue;
             }
             [$kind, $id] = explode(':', $claim, 2);
+            if ($this->codeIsSpent($kind, $id)) {
+                $quote->removeItem($item->getId());
+                $removed = true;
+                continue;
+            }
             $answer = $this->claims->find($quote->getStore()->getWebsiteId(), $quote->getCustomerId(), $kind, $id);
             if ($answer === null) {
                 continue;
@@ -298,6 +307,23 @@ class FreeProduct
         }
 
         return CartRequirement::met($answer['minimum_requirements'] ?? null, $paidCost, $paidQuantity);
+    }
+
+    /**
+     * Whether a code reward's code has already been on an order here.
+     * LoyaltyLion creates each code as a coupon in the store, and
+     * `retireCoupons` deletes it when an order with its free line is placed,
+     * which is sooner than LoyaltyLion hears of that order. A reward line
+     * never goes through the coupon, so Magento's own limit on a coupon's
+     * uses can't stop a second order.
+     */
+    private function codeIsSpent(string $kind, string $id): bool
+    {
+        if ($kind !== ClaimedFreeProducts::CODE) {
+            return false;
+        }
+
+        return !$this->couponFactory->create()->loadByCode($id)->getId();
     }
 
     private function claimOf(Item $item): ?string
