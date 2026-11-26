@@ -8,6 +8,7 @@ use Loyaltylion\Core\Model\Heartbeat;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Reports in to LoyaltyLion at the end of every setup:upgrade, so a store that
@@ -16,8 +17,10 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
  */
 class RecurringData implements InstallDataInterface
 {
-    public function __construct(private readonly Heartbeat $heartbeat)
-    {
+    public function __construct(
+        private readonly Heartbeat $heartbeat,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context): void
@@ -26,6 +29,7 @@ class RecurringData implements InstallDataInterface
             $this->heartbeat->send();
         } catch (\Throwable $e) {
             // The hourly report follows, and an upgrade must not fail because LoyaltyLion could not be reached.
+            $this->logger->warning('[LoyaltyLion] The module could not report in after the upgrade: ' . $e->getMessage());
         }
     }
 }

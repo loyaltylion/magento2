@@ -10,6 +10,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Notes a customer subscribing to the newsletter, which a newsletter sign-up
@@ -20,7 +21,8 @@ class QueueNewsletterSignup implements ObserverInterface
 {
     public function __construct(
         private readonly Queue $queue,
-        private readonly StoreManagerInterface $storeManager
+        private readonly StoreManagerInterface $storeManager,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -46,7 +48,7 @@ class QueueNewsletterSignup implements ObserverInterface
             );
         } catch (\Throwable $e) {
             // The shopper's subscription must go through whatever happens here.
-            return;
+            $this->logger->warning('[LoyaltyLion] A newsletter sign-up was not queued: ' . $e->getMessage());
         }
     }
 }

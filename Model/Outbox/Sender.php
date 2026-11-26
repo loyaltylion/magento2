@@ -144,7 +144,11 @@ class Sender
                     self::WAITED_ON_TIMEOUT_SECONDS
                 );
             } catch (\Throwable $e) {
-                // The scheduled run meets the same failure and records it.
+                // The scheduled run meets the same failure and records it on the row.
+                $this->logger->warning(
+                    sprintf('[LoyaltyLion] order %d could not be sent from its confirmation page: %s', $orderId, $e->getMessage())
+                );
+
                 return Outcome::RETRY;
             }
         } finally {

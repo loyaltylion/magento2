@@ -7,6 +7,7 @@ namespace Loyaltylion\Core\CustomerData;
 use Loyaltylion\Core\Model\Shopper\Signer;
 use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * The signed-in shopper, for the storefront script to hand to LoyaltyLion's
@@ -16,7 +17,8 @@ class Shopper implements SectionSourceInterface
 {
     public function __construct(
         private readonly Session $session,
-        private readonly Signer $signer
+        private readonly Signer $signer,
+        private readonly StoreManagerInterface $storeManager
     ) {
     }
 
@@ -32,7 +34,10 @@ class Shopper implements SectionSourceInterface
             'packet' => $this->signer->packet(
                 (string) $customer->getId(),
                 (string) $customer->getEmail(),
-                $customer->getWebsiteId()
+                // The website being browsed, whose site the page's SDK was
+                // started for. Where accounts are shared between websites it
+                // is not always the one the customer registered on.
+                $this->storeManager->getStore()->getWebsiteId()
             ),
         ];
     }

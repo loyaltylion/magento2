@@ -47,7 +47,8 @@ and SDK secret token. The Magento admin shows a system message naming the websit
 - A row is **waiting** until LoyaltyLion accepts it, and is retried after one minute, then two, four, and so on up
   to six hours, for as long as it takes. A row is **held** while the loyalty program has not launched or the API
   key is refused. A row is **parked** when LoyaltyLion refuses that order or customer itself; `last_error` says
-  why, and it is sent again if the order or customer changes.
+  why, and it is sent again if the order or customer changes. Once the cause is put right,
+  `bin/magento loyaltylion:outbox:retry-parked` queues the parked rows again (`--website <id>` for one website).
 - To point a store at another LoyaltyLion environment:
   `bin/magento config:set loyaltylion/connection/api_host <host>`, `loyaltylion/connection/sdk_host <host>`,
   `loyaltylion/connection/sdk_static_host <host>` and `loyaltylion/connection/platform_host <host>`.

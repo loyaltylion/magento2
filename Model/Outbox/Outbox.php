@@ -157,6 +157,31 @@ class Outbox
     }
 
     /**
+     * Makes the parked rows ready to send again, for when what LoyaltyLion
+     * refused them for has been put right.
+     *
+     * @param int|null $websiteId null takes every website's rows
+     * @return int how many rows
+     */
+    public function retryParked(?int $websiteId = null): int
+    {
+        $where = ['state = ?' => self::PARKED];
+        if ($websiteId !== null) {
+            $where['website_id = ?'] = $websiteId;
+        }
+
+        return (int) $this->db()->update(
+            $this->table(),
+            [
+                'state' => self::WAITING,
+                'attempts' => 0,
+                'available_at' => new \Zend_Db_Expr('CURRENT_TIMESTAMP'),
+            ],
+            $where
+        );
+    }
+
+    /**
      * @param int|null $websiteId null counts every website's rows
      * @return array{waiting: int, parked: int, oldest_waiting_at: ?string}
      */

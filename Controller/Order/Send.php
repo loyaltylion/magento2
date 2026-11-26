@@ -30,6 +30,9 @@ class Send implements HttpPostActionInterface
     {
         $result = $this->jsonFactory->create();
         $orderId = (int) $this->checkoutSession->getLastOrderId();
+        // PHP holds the session for the whole request, and the shopper's other
+        // requests wait for it. Nothing below needs it.
+        $this->checkoutSession->writeClose();
 
         if ($orderId === 0 || !$this->placements->isOn(Placements::ORDER_CONFIRMATION)) {
             return $result->setData(['sent' => false]);

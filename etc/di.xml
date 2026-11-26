@@ -15,9 +15,29 @@
             </argument>
         </arguments>
     </type>
+    <!-- Keeps the credentials out of app/etc/config.php when a store dumps its
+         configuration, and the hosts out of a dump shared between environments. -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="loyaltylion/connection/token" xsi:type="string">1</item>
+                <item name="loyaltylion/connection/api_key" xsi:type="string">1</item>
+                <item name="loyaltylion/connection/sdk_token" xsi:type="string">1</item>
+                <item name="loyaltylion_core/general/token" xsi:type="string">1</item>
+                <item name="loyaltylion_core/general/secret" xsi:type="string">1</item>
+            </argument>
+            <argument name="environment" xsi:type="array">
+                <item name="loyaltylion/connection/api_host" xsi:type="string">1</item>
+                <item name="loyaltylion/connection/sdk_host" xsi:type="string">1</item>
+                <item name="loyaltylion/connection/sdk_static_host" xsi:type="string">1</item>
+                <item name="loyaltylion/connection/platform_host" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
             <argument name="commands" xsi:type="array">
+                <item name="loyaltylion_outbox_retry_parked" xsi:type="object">Loyaltylion\Core\Console\Command\RetryParkedCommand</item>
                 <item name="loyaltylion_outbox_send" xsi:type="object">Loyaltylion\Core\Console\Command\SendOutboxCommand</item>
                 <item name="loyaltylion_report" xsi:type="object">Loyaltylion\Core\Console\Command\ReportCommand</item>
             </argument>
