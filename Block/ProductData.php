@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Loyaltylion\Core\Block;
 
 use Loyaltylion\Core\Model\Config;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Registry;
@@ -13,9 +14,10 @@ use Magento\Framework\View\Element\Template\Context;
 
 /**
  * The product on its page as the SDK's Points for product block reads it: its
- * id, and the id, price and options of each item a shopper can pick. Amounts
- * are in the smallest unit of the store's base currency, as in the SDK's cart
- * (see SdkCart). The block itself is placed through LoyaltyLion's Theme Editor.
+ * id, and the id, price and options of each item a shopper can pick. Prices
+ * are on the base the order is sent with, as in the SDK's cart (see SdkCart):
+ * the store's base currency, excluding tax, in its smallest unit. The block
+ * itself is placed through LoyaltyLion's Theme Editor.
  */
 class ProductData extends Template
 {
@@ -29,6 +31,7 @@ class ProductData extends Template
         Context $context,
         private readonly Registry $registry,
         private readonly Config $config,
+        private readonly CatalogHelper $catalogHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -48,14 +51,15 @@ class ProductData extends Template
         }
 
         $type = $product->getTypeInstance();
+        $variants = $type instanceof Configurable
+            ? $this->variantsOf($product, $type)
+            : [$this->variant($product, [])];
 
         return [
             'id' => (string) $product->getId(),
             'sku' => (string) $product->getSku(),
-            'price' => self::price($product),
-            'variants' => $type instanceof Configurable
-                ? $this->variantsOf($product, $type)
-                : [self::variant($product, [])],
+            'price' => $type instanceof Configurable ? $this->lowestPrice($variants) : $variants[0]['price'],
+            'variants' => $variants,
         ];
     }
 
@@ -71,29 +75,45 @@ class ProductData extends Template
                 $options[(string) $attributeId] = (string) $child->getData($code);
             }
 
-            $variants[] = self::variant($child, $options);
+            $variants[] = $this->variant($child, $options);
         }
 
         return $variants;
     }
 
-    private static function variant(Product $product, array $options): array
+    private function variant(Product $product, array $options): array
     {
         return [
             'id' => (string) $product->getId(),
             'sku' => (string) $product->getSku(),
-            'price' => self::price($product),
+            'price' => $this->price($product),
             'available' => (bool) $product->isSalable(),
             // an object even when empty, as the SDK reads it
             'options' => (object) $options,
         ];
     }
 
-    // The final price the page shows, before it converts it to the shopper's display currency.
-    private static function price(Product $product): int
+    /**
+     * What one costs after special and catalog prices, before any cart price
+     * rule. Magento's final price is in base currency and as the catalog holds
+     * it, which can include tax; Magento's own helper takes the tax off.
+     */
+    private function price(Product $product): int
     {
-        $amount = $product->getPriceInfo()->getPrice('final_price')->getAmount()->getValue();
+        $amount = $this->catalogHelper->getTaxPrice($product, $product->getFinalPrice(1), false);
 
         return (int) round((float) $amount * 100);
+    }
+
+    /**
+     * A configurable product's price is its cheapest choice in stock, as its
+     * page shows, or its cheapest choice when none is in stock.
+     */
+    private function lowestPrice(array $variants): int
+    {
+        $available = array_filter($variants, static fn (array $variant) => $variant['available']);
+        $prices = array_column($available ?: $variants, 'price');
+
+        return $prices ? min($prices) : 0;
     }
 }

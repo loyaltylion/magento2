@@ -14,7 +14,8 @@ class CartRequirement
 {
     /**
      * @param array|null $requirement ["cost" => float] or ["quantity" => int], or null for none
-     * @param float $paidCost what the lines that are not rewards come to, after their discounts
+     * @param float $paidCost what the lines that are not rewards come to, after their discounts, in base
+     *                        currency and excluding tax, as the order is sent
      * @param int $paidQuantity how many units those lines hold that have a price
      */
     public static function met(?array $requirement, float $paidCost, int $paidQuantity): bool

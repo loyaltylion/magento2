@@ -4,6 +4,13 @@
     <type name="Magento\Customer\Api\AccountManagementInterface">
         <plugin name="loyaltylion_queue_registration" type="Loyaltylion\Core\Plugin\QueueRegistration"/>
     </type>
+    <!-- Hyvä's own class, so on a store without Hyvä this plugin is never called. -->
+    <type name="Hyva\Theme\Service\Navigation">
+        <plugin name="loyaltylion_loyalty_page_link" type="Loyaltylion\Core\Plugin\AddLoyaltyPageToHyvaMenu"/>
+    </type>
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="loyaltylion_guest_cart_id" type="Loyaltylion\Core\Plugin\CustomerData\GuestCartId"/>
+    </type>
     <type name="Magento\Customer\CustomerData\SectionPoolInterface">
         <arguments>
             <argument name="sectionSourceMap" xsi:type="array">
