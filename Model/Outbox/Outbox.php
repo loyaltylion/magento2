@@ -55,12 +55,28 @@ class Outbox
     }
 
     /**
-     * @return array[] rows ready to send, oldest first
+     * @return int[] the websites with rows ready to send
      */
-    public function due(int $limit): array
+    public function dueWebsites(): array
+    {
+        $select = $this->db()->select()
+            ->distinct()
+            ->from($this->table(), ['website_id'])
+            ->where('state IN (?)', [self::WAITING, self::HELD])
+            ->where('available_at <= CURRENT_TIMESTAMP')
+            ->order('website_id ASC');
+
+        return array_map('intval', $this->db()->fetchCol($select));
+    }
+
+    /**
+     * @return array[] one website's rows ready to send, oldest first
+     */
+    public function due(int $websiteId, int $limit): array
     {
         $select = $this->db()->select()
             ->from($this->table())
+            ->where('website_id = ?', $websiteId)
             ->where('state IN (?)', [self::WAITING, self::HELD])
             ->where('available_at <= CURRENT_TIMESTAMP')
             ->order('available_at ASC')
@@ -111,6 +127,27 @@ class Outbox
     }
 
     /**
+     * Holds every row a website has ready, for a reason that applies to all of
+     * them, so the next runs don't ask LoyaltyLion the same thing row by row.
+     */
+    public function holdWebsite(int $websiteId, int $seconds, string $reason): void
+    {
+        $this->db()->update(
+            $this->table(),
+            [
+                'state' => self::HELD,
+                'available_at' => new \Zend_Db_Expr(sprintf('DATE_ADD(CURRENT_TIMESTAMP, INTERVAL %d SECOND)', $seconds)),
+                'last_error' => mb_substr($reason, 0, 255),
+            ],
+            [
+                'website_id = ?' => $websiteId,
+                'state IN (?)' => [self::WAITING, self::HELD],
+                'available_at <= CURRENT_TIMESTAMP',
+            ]
+        );
+    }
+
+    /**
      * Sets aside a row LoyaltyLion will never accept as it is. It is sent
      * again only if the entity changes.
      */
@@ -147,6 +184,11 @@ class Outbox
         ];
     }
 
+    /**
+     * Leaves the row as it is if the entity changed while it was being sent:
+     * `add` has already made it ready again, and what LoyaltyLion said was
+     * about the older state.
+     */
     private function move(array $row, string $state, int $seconds, ?string $error, bool $countsAsTry): void
     {
         $this->db()->update(
@@ -157,7 +199,7 @@ class Outbox
                 'attempts' => new \Zend_Db_Expr($countsAsTry ? 'attempts + 1' : 'attempts'),
                 'last_error' => $error === null ? null : mb_substr($error, 0, 255),
             ],
-            ['id = ?' => $row['id']]
+            ['id = ?' => $row['id'], 'version = ?' => $row['version']]
         );
     }
 
