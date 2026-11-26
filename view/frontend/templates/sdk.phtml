@@ -35,8 +35,8 @@ ob_start();
     }
 <?php if ($connection->signsShoppers()): ?>
     // The SDK settles what a shopper may do, and what belongs in their cart,
-    // as it starts. So it starts once the store has said who the shopper is,
-    // with them attached, and not as a guest who signs in a moment later.
+    // as it starts. So for a signed-in customer it waits for the store to say
+    // who they are, rather than start as a guest who signs in a moment later.
     function know(shopper) {
         if (!started) {
             start(shopper.packet);
@@ -44,16 +44,18 @@ ob_start();
             window.loyaltylion.authenticateCustomer(shopper.packet);
         }
     }
+    <?php if (!$block->isSignedIn()): ?>
+    start(null);
+    <?php endif; ?>
 
     // Hyvä announces its private content with an event, and leaves out a
     // section it has nothing for, which is a guest.
     window.addEventListener('private-content-loaded', function (event) {
         know((event.detail.data || {})['loyaltylion-shopper'] || { packet: null });
     });
-    // Luma keeps it in customer-data, which needs the RequireJS that only Luma
-    // loads, and does not fetch a section for a first-time visitor unasked.
+    // Luma keeps it in customer-data, which needs the RequireJS that only Luma loads.
     if (typeof window.require === 'function') {
-        window.require(['Magento_Customer/js/customer-data'], function (customerData) {
+        window.require(['jquery', 'mage/url', 'Magento_Customer/js/customer-data'], function ($, url, customerData) {
             var shopper = customerData.get('loyaltylion-shopper');
             shopper.subscribe(function (loaded) {
                 if ('packet' in loaded) {
@@ -63,11 +65,27 @@ ob_start();
             // customer-data can't be asked for anything until the page has
             // set it up, which this promise waits for.
             customerData.getInitCustomerData().done(function () {
+                if (started) {
+                    return;
+                }
                 if ('packet' in shopper()) {
                     know(shopper());
-                } else {
-                    customerData.reload(['loyaltylion-shopper'], false);
+                    return;
                 }
+                // Not customerData.reload: on an error answer its own handler
+                // throws, so a callback added after it never runs, and the SDK
+                // has to start whatever the answer.
+                $.getJSON(url.build('customer/section/load'), { sections: 'loyaltylion-shopper' })
+                    .done(function (sections) {
+                        if (sections && sections['loyaltylion-shopper']) {
+                            customerData.set('loyaltylion-shopper', sections['loyaltylion-shopper']);
+                        }
+                    })
+                    .always(function () {
+                        if (!started) {
+                            start(null);
+                        }
+                    });
             });
         });
     }
@@ -82,7 +100,7 @@ ob_start();
             window.loyaltylionFreeProduct(<?= /* @noEscape */ json_encode([
                 'url' => $block->getUrl('loyaltylion/reward/add'),
                 'message' => (string) __('Your reward is in your cart.'),
-            ]) ?>);
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR) ?>);
         };
         if (started) {
             register();
