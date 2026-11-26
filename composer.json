@@ -46,6 +46,26 @@
   ],
   "require": {
     "php": ">=8.1",
-    "magento/framework": ">=103.0.4"
+    "guzzlehttp/guzzle": "^7.0",
+    "magento/framework": ">=103.0.4",
+    "magento/module-backend": "*",
+    "magento/module-catalog": "*",
+    "magento/module-checkout": "*",
+    "magento/module-config": "*",
+    "magento/module-configurable-product": "*",
+    "magento/module-cron": "*",
+    "magento/module-csp": "*",
+    "magento/module-customer": "*",
+    "magento/module-integration": "*",
+    "magento/module-newsletter": "*",
+    "magento/module-quote": "*",
+    "magento/module-sales": "*",
+    "magento/module-sales-rule": "*",
+    "magento/module-store": "*",
+    "magento/module-theme": "*",
+    "magento/module-widget": "*"
+  },
+  "suggest": {
+    "magento/module-multishipping": "A cart that holds a reward is kept out of the checkout with multiple addresses"
   }
 }
