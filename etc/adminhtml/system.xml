@@ -27,7 +27,7 @@
                 <field id="api_key" translate="label comment" type="obscure" sortOrder="30"
                        showInDefault="0" showInWebsite="1" showInStore="0">
                     <label>API key</label>
-                    <comment>Needs the write_orders and write_customers scopes. Sends this website's orders and customers to LoyaltyLion.</comment>
+                    <comment>Needs the read_customers, write_customers and write_orders scopes. Sends this website's orders and customers to LoyaltyLion.</comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="sdk_token" translate="label comment" type="obscure" sortOrder="40"

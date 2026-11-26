@@ -6,6 +6,7 @@ namespace Loyaltylion\Core\Model\Reward;
 
 use Loyaltylion\Core\Model\Api\Client;
 use Loyaltylion\Core\Model\Config;
+use Loyaltylion\Core\Model\Outbox\Outcome;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -41,7 +42,10 @@ class ClaimedFreeProducts
      * @param int|string|null $websiteId
      * @param int|string|null $customerId
      * @return array|null ["outcome" => "available", "sku" => string], or ["outcome" => "unavailable",
-     *                    "reason" => string], or null when LoyaltyLion can't be reached
+     *                    "reason" => string], or null when LoyaltyLion can't be reached. Only a failure
+     *                    that another try could get past counts as unreachable: a caller keeps a reward
+     *                    it could not check, and an answer such as a refused API key would then keep
+     *                    every reward for as long as the store runs.
      */
     public function find($websiteId, $customerId, string $kind, string $id): ?array
     {
@@ -55,7 +59,7 @@ class ClaimedFreeProducts
 
         $connection = $this->config->forWebsite($websiteId);
         if (!$connection->sendsChanges()) {
-            return null;
+            return ['outcome' => 'unavailable', 'reason' => 'not_connected'];
         }
 
         $response = $this->client->send(
@@ -67,12 +71,14 @@ class ClaimedFreeProducts
         );
         $answer = $response->json();
 
-        if ($response->status !== 200 || !isset($answer['outcome'])) {
-            $this->logger->error('[LoyaltyLion] Free product check failed - status: ' . $response->status);
-
-            return null;
+        if ($response->status === 200 && isset($answer['outcome'])) {
+            return $answer;
         }
 
-        return $answer;
+        $this->logger->error('[LoyaltyLion] Free product check failed - status: ' . $response->status);
+
+        return Outcome::of($response->status) === Outcome::RETRY
+            ? null
+            : ['outcome' => 'unavailable', 'reason' => 'refused'];
     }
 }
