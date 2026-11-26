@@ -34,6 +34,7 @@ class OrderState
             'customer_group_id' => $this->integer($order->getCustomerGroupId()),
             'base_grand_total' => $this->amount($order->getBaseGrandTotal()) ?? '0',
             'base_shipping_amount' => $this->amount($order->getBaseShippingAmount()) ?? '0',
+            'base_shipping_tax_amount' => $this->amount($order->getBaseShippingTaxAmount()),
             'base_total_due' => $this->amount($order->getBaseTotalDue()),
             'base_total_paid' => $this->amount($order->getBaseTotalPaid()),
             'base_total_refunded' => $this->amount($order->getBaseTotalRefunded()),
