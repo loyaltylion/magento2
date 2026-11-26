@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="admin_system_config_changed_section_loyaltylion">
+        <observer name="loyaltylion_forget_old_secret" instance="Loyaltylion\Core\Observer\ForgetOldSecret"/>
+    </event>
+    <!-- An order an admin edits or reorders is rebuilt from its lines, label and all. -->
+    <event name="sales_convert_order_item_to_quote_item">
+        <observer name="loyaltylion_unlabel_reordered_reward" instance="Loyaltylion\Core\Observer\UnlabelReorderedReward"/>
+    </event>
+</config>

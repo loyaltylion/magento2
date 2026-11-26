@@ -11,6 +11,7 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class ConnectionManagement implements ConnectionManagementInterface
 {
@@ -22,7 +23,9 @@ class ConnectionManagement implements ConnectionManagementInterface
         private readonly StoreManagerInterface $storeManager,
         private readonly TypeListInterface $caches,
         private readonly Heartbeat $heartbeat,
-        private readonly Config $config
+        private readonly Config $config,
+        private readonly OldSecret $oldSecret,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -57,6 +60,7 @@ class ConnectionManagement implements ConnectionManagementInterface
         foreach ($settings as $field => $value) {
             $this->writer->save(self::PREFIX . $field, $value, ScopeInterface::SCOPE_WEBSITES, (int) $website->getId());
         }
+        $this->oldSecret->forget((int) $website->getId());
 
         // Pages cached before this carry no LoyaltyLion script, or the previous site's.
         $this->caches->cleanType('config');
@@ -67,6 +71,7 @@ class ConnectionManagement implements ConnectionManagementInterface
             $this->heartbeat->send();
         } catch (\Throwable $e) {
             // The hourly report follows.
+            $this->logger->warning('[LoyaltyLion] Could not report in after connecting: ' . $e->getMessage());
         }
 
         return true;

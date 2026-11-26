@@ -10,8 +10,13 @@ use Magento\Store\Model\ScopeInterface;
 
 class Config
 {
+    /** Where module 1.x kept a website's site secret, which signs shoppers until the SDK secret token is entered */
+    public const OLD_SECRET_PATH = 'loyaltylion_core/general/secret';
+
     private const PREFIX = 'loyaltylion/connection/';
     private const OLD_MODULE_PREFIX = 'loyaltylion_core/general/';
+    /** How Magento's encryptor begins a value: key version, then cipher version */
+    private const ENCRYPTED = '/^\d+:\d+:/';
     private const FREE_PRODUCT_CART = 'loyaltylion/storefront/free_product_cart';
 
     public function __construct(
@@ -28,7 +33,7 @@ class Config
         $siteId = $this->value('site_id', $websiteId);
         $sdkToken = $this->secret('sdk_token', $websiteId);
         $oldToken = $this->oldValue('token', $websiteId);
-        $oldSecret = $this->oldValue('secret', $websiteId);
+        $oldSecret = $this->oldSecret($websiteId);
 
         return new Connection(
             $siteId === null ? null : (int) $siteId,
@@ -57,6 +62,22 @@ class Config
     private function oldValue(string $field, $websiteId): ?string
     {
         return $this->read(self::OLD_MODULE_PREFIX . $field, $websiteId);
+    }
+
+    /**
+     * Module 1.x stored the site secret in plain text. Upgrading encrypts it
+     * where it is in the database; a value set in a file under app/etc stays
+     * as it was written.
+     */
+    private function oldSecret($websiteId): ?string
+    {
+        $stored = $this->oldValue('secret', $websiteId);
+
+        if ($stored === null || !preg_match(self::ENCRYPTED, $stored)) {
+            return $stored;
+        }
+
+        return $this->encryptor->decrypt($stored) ?: null;
     }
 
     private function read(string $path, $websiteId): ?string
