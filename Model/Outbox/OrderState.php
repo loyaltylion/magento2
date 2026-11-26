@@ -81,6 +81,9 @@ class OrderState
                 'base_price' => $this->amount($item->getBasePrice()) ?? '0',
                 'base_discount_amount' => $this->amount($item->getBaseDiscountAmount()),
                 'base_tax_amount' => $this->amount($item->getBaseTaxAmount()),
+                // Which units a refund took back, so the points for a line
+                // are returned for that line and not spread over the order.
+                'qty_refunded' => (float) $item->getQtyRefunded() > 0 ? (float) $item->getQtyRefunded() : null,
             ], static fn ($value) => $value !== null);
         }
 
