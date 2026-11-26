@@ -138,6 +138,17 @@ class FreeProduct
         }
     }
 
+    public function hasLines(Quote $quote): bool
+    {
+        foreach ($quote->getAllVisibleItems() as $item) {
+            if ($this->claimOf($item) !== null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Takes out of the cart the reward lines LoyaltyLion no longer allows, or
      * whose cart requirement the rest of the cart no longer meets, and says
