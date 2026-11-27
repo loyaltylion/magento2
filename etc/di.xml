@@ -34,6 +34,25 @@
             </argument>
         </arguments>
     </type>
+    <!-- Magento builds every command to list them, also during setup:install before any table exists.
+         Proxies keep the commands' models, which read the database when built, from loading until one runs. -->
+    <type name="Loyaltylion\Core\Console\Command\SendOutboxCommand">
+        <arguments>
+            <argument name="sender" xsi:type="object">Loyaltylion\Core\Model\Outbox\Sender\Proxy</argument>
+            <argument name="outbox" xsi:type="object">Loyaltylion\Core\Model\Outbox\Outbox\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Loyaltylion\Core\Console\Command\RetryParkedCommand">
+        <arguments>
+            <argument name="outbox" xsi:type="object">Loyaltylion\Core\Model\Outbox\Outbox\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Loyaltylion\Core\Console\Command\ReportCommand">
+        <arguments>
+            <argument name="heartbeat" xsi:type="object">Loyaltylion\Core\Model\Heartbeat\Proxy</argument>
+            <argument name="capabilities" xsi:type="object">Loyaltylion\Core\Model\Capabilities\Proxy</argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
             <argument name="commands" xsi:type="array">
